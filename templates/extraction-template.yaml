@@ -1,0 +1,386 @@
+# extraction-template.yaml
+# Template completo para capturar todos os DNA YAMLs de um expert
+# Usado como referência estrutural durante as tasks 02-05
+
+---
+
+# =============================================================================
+# METADATA
+# =============================================================================
+expert:
+  nome_completo: ""
+  primeiro_nome: ""
+  slug: ""  # ex: alex-hormozi
+  dominio_principal: ""
+  descricao_breve: ""
+  extractor: ""
+  extraction_date: ""
+  sources_used: 0
+  tier1_sources: 0
+  fidelity_score: 0
+
+# =============================================================================
+# SOURCES (gerado em 01-source-discovery)
+# =============================================================================
+sources:
+  tier1:
+    - id: "S01"
+      tipo: "livro | curso | entrevista_longa | podcast_principal"
+      titulo: ""
+      url_ou_isbn: ""
+      ano: 0
+      horas_estimadas: 0
+      status: "disponivel | verificar | indisponivel"
+      notas: ""
+
+  tier2:
+    - id: "S02"
+      tipo: "podcast_medio | blog_post | artigo"
+      titulo: ""
+      url: ""
+      ano: 0
+      minutos_estimados: 0
+
+  tier3:
+    - id: "S03"
+      tipo: "clip | tweet | post_social"
+      titulo: ""
+      url: ""
+      ano: 0
+
+  descartados:
+    - titulo: ""
+      motivo: "resumo_terceiros | especulativo | desatualizado | sem_atribuicao"
+
+# =============================================================================
+# THINKING DNA (gerado em 02-extract-thinking-dna)
+# =============================================================================
+thinking_dna:
+
+  primary_framework: ""
+  # Nome do framework/modelo mais central do expert
+
+  mental_models:
+    MM_001:
+      name: "(MASTER MODEL)"
+      formula: ""  # se houver
+      application: ""
+      sources: []  # IDs das fontes onde foi encontrado
+      confidence: "confirmado | possivel"
+
+    MM_002:
+      name: ""
+      insight: ""
+      sources: []
+      confidence: "confirmado | possivel"
+
+    MM_003:
+      name: ""
+      insight: ""
+      sources: []
+      confidence: "confirmado | possivel"
+
+    MM_004:
+      name: ""
+      insight: ""
+      sources: []
+      confidence: "confirmado | possivel"
+
+    MM_005:
+      name: ""
+      insight: ""
+      sources: []
+      confidence: "confirmado | possivel"
+
+    MM_006:
+      name: ""
+      insight: ""
+      sources: []
+      confidence: "confirmado | possivel"
+
+    MM_007:
+      name: ""
+      insight: ""
+      sources: []
+      confidence: "confirmado | possivel"
+
+    MM_008:
+      name: ""
+      insight: ""
+      sources: []
+      confidence: "confirmado | possivel"
+
+  decision_tree:
+    # Sequência de raciocínio que o expert usa ao abordar problemas
+    - "1. "
+    - "2. "
+    - "3. "
+    - "4. "
+    - "5. "
+
+  heuristics:
+    # Regras práticas SE → ENTÃO extraídas do comportamento
+    - "SE  ENTÃO "
+    - "SE  ENTÃO "
+    - "SE  ENTÃO "
+    - "SE  ENTÃO "
+    - "SE  ENTÃO "
+
+  veto_conditions:
+    # O que o expert NUNCA faz ou NUNCA recomenda
+    - ""
+    - ""
+    - ""
+
+  prioritization_rules:
+    # Como o expert escolhe o que resolver primeiro
+    - ""
+    - ""
+
+# =============================================================================
+# VOICE DNA (gerado em 03-extract-voice-dna)
+# =============================================================================
+voice_dna:
+
+  tone_profile:
+    # Adjetivos que descrevem o estilo de comunicação
+    - ""
+    - ""
+    - ""
+
+  vocabulary:
+    always_use:
+      # Termos exclusivos que identificam o expert
+      - termo: ""
+        alternativa_generica: ""
+        fontes: []
+        frequencia: "muito_alta | alta | media"
+
+    never_use:
+      # Termos que o expert evita ou rejeita
+      - termo: ""
+        alternativa: ""
+        motivo: ""
+
+  signature_phrases:
+    # Frases que o expert repete com frequência (3+ ocorrências em fontes diferentes)
+    confirmed:
+      - frase: ""
+        ocorrencias: 0
+        fontes: []
+        contexto: ""
+
+    possible:
+      - frase: ""
+        ocorrencias: 0
+        fontes: []
+
+  metaphors:
+    # Metáforas recorrentes
+    - metafora: ""
+      quando_usa: ""
+      fonte: ""
+
+  communication_patterns:
+    # Padrões estruturais de como o expert se comunica
+    - ""
+    - ""
+    - ""
+
+  opening_lines:
+    # Frases de abertura típicas
+    - ""
+    - ""
+
+  closing_lines:
+    # Frases de encerramento típicas
+    - ""
+    - ""
+
+# =============================================================================
+# BEHAVIORAL DNA (gerado em 04-extract-behavioral-dna)
+# =============================================================================
+behavioral_dna:
+
+  behavioral_states:
+    state_001:
+      slug: ""
+      trigger: ""
+      response_pattern: |
+
+      fonte: ""
+      confidence: "confirmado | possivel"
+
+    state_002:
+      slug: ""
+      trigger: ""
+      response_pattern: |
+
+      fonte: ""
+      confidence: "confirmado | possivel"
+
+    state_003:
+      slug: ""
+      trigger: ""
+      response_pattern: |
+
+      fonte: ""
+      confidence: "confirmado | possivel"
+
+    state_004:
+      slug: ""
+      trigger: ""
+      response_pattern: |
+
+      fonte: ""
+      confidence: "confirmado | possivel"
+
+  immune_system:
+    # Situações que acionam rejeição/redirecionamento
+    - trigger: ""
+      response: ""
+      principio_protegido: ""
+
+    - trigger: ""
+      response: ""
+      principio_protegido: ""
+
+    - trigger: ""
+      response: ""
+      principio_protegido: ""
+
+  antipattern_rejection_template: |
+    # Template de rejeição no estilo do expert
+
+
+  rejected_antipatterns:
+    # Comportamentos/ideias que o expert sistematicamente rejeita
+    - antipadrao: ""
+      principio_violado: ""
+      resposta_tipica: ""
+      fonte: ""
+
+  disagreement_style:
+    # Como o expert discorda
+    - ""
+    - ""
+
+  ambiguity_handling:
+    # Como o expert lida com perguntas vagas
+    - ""
+    - ""
+
+# =============================================================================
+# VALUES DNA (gerado em 05-extract-values-dna)
+# =============================================================================
+values_dna:
+
+  value_hierarchy:
+    tier1_existential:
+      # Valores que o expert nunca compromete
+      - valor: ""
+        descricao: ""
+        fonte: ""
+
+    tier2_operational:
+      # Valores que guiam as decisões do dia a dia
+      - valor: ""
+        descricao: ""
+
+    tier3_preferences:
+      # Preferências consistentes, mas adaptáveis
+      - valor: ""
+        descricao: ""
+
+  core_beliefs:
+    # Crenças centrais sobre o domínio
+    - crenca: ""
+      evidencia: ""
+      fonte: ""
+
+  obsessions:
+    # O que o expert volta sempre, tema recorrente
+    - ""
+    - ""
+    - ""
+
+  non_negotiables:
+    # O que o expert nunca faz, sem exceção
+    - ""
+    - ""
+
+  definition_of_success:
+    # Como o expert define sucesso no domínio
+    curto_prazo: ""
+    longo_prazo: ""
+    metricas_preferidas: []
+
+  worldview:
+    # Perspectiva macro do expert
+    - ""
+    - ""
+
+# =============================================================================
+# CLONE CONFIG (gerado em 07-decide-clone-type)
+# =============================================================================
+clone_config:
+  type: "A | B"
+  justification: ""
+
+  # Squad architecture (todo clone é Squad)
+  squad_architecture:
+    tier1: []
+    tier2: []
+    tier3: []
+    total_specialists: 0
+
+  template_to_use: "templates/squad-agent.md"
+
+# =============================================================================
+# VALIDATION SUMMARY (gerado em 06-validate-extraction)
+# =============================================================================
+validation:
+  fidelity_score:
+    frameworks: 0   # max 30
+    phrases: 0      # max 25
+    behavioral: 0   # max 24
+    vocabulary: 0   # max 15
+    examples: 0     # max 6
+    total: 0        # max 100
+
+  gate: "PASS | WARN | BLOCK"
+  low_fidelity_flag: false
+  gaps_identified: []
+
+# =============================================================================
+# OUTPUT EXAMPLES (para injeção em 08-generate-agent)
+# =============================================================================
+output_examples:
+  - input: ""
+    output: |
+
+
+  - input: ""
+    output: |
+
+
+  - input: ""
+    output: |
+
+
+  - input: ""
+    output: |
+
+
+# =============================================================================
+# COMPLETION CRITERIA (para injeção em 08-generate-agent)
+# =============================================================================
+completion_criteria:
+  - tipo_missao: ""
+    done_when: ""
+
+  - tipo_missao: ""
+    done_when: ""
+
+  - tipo_missao: ""
+    done_when: ""

@@ -1,0 +1,113 @@
+# Sources Template — Clone Expert v1.0
+# OUTPUT DE: tasks/01-source-discovery.md
+# CONSUMIDO POR: tasks/02, 03, 04, 05 (extração de DNA)
+# SALVAR EM: clone-expert/output/{expert-slug}/sources.yaml
+
+expert:
+  name: "{Nome Completo do Expert}"
+  slug: "{primeiro-sobrenome}"        # Ex: seth-godin, paul-graham
+  discovery_date: "{YYYY-MM-DD}"
+  total_sources: 0
+  tier1_count: 0
+  tier2_count: 0
+  tier3_count: 0
+  discarded_count: 0
+
+# Gate G1: tier1_count >= 3 para prosseguir
+
+sources:
+
+  tier1:
+    # Fontes ouro: 90-95% fidelidade
+    # Tipos: livros, cursos, entrevistas 1h+, transcrições de palestras, newsletters completas
+    - id: "T1-001"
+      title: "{Título da Fonte}"
+      type: "book | course | interview_long | keynote_transcript | newsletter_archive"
+      url_or_ref: "{URL ou referência}"
+      year: 0000
+      approximate_words: 0         # Para textos
+      approximate_minutes: 0       # Para áudio/vídeo
+      access_status: "available | transcript_needed | paywalled | pending"
+      notes: ""
+
+    # - id: "T1-002"
+    #   ...
+
+  tier2:
+    # Fontes prata: 70-85% fidelidade
+    # Tipos: podcasts 30-60min, YouTube 20min+, blog posts 2000+, Q&A gravado
+    - id: "T2-001"
+      title: "{Título da Fonte}"
+      type: "podcast_guest | youtube_educational | blog_post_long | qa_recorded"
+      url_or_ref: "{URL}"
+      year: 0000
+      approximate_minutes: 0
+      access_status: "available | transcript_needed | pending"
+      notes: ""
+
+    # - id: "T2-002"
+    #   ...
+
+  tier3:
+    # Fontes bronze: 40-60% fidelidade
+    # Tipos: clips <5min, posts sociais, entrevistas como entrevistador, citações em artigos
+    - id: "T3-001"
+      title: "{Título ou descrição}"
+      type: "clip_short | social_post | interviewer_role | third_party_citation"
+      url_or_ref: "{URL}"
+      year: 0000
+      notes: ""
+
+    # - id: "T3-002"
+    #   ...
+
+  discarded:
+    # Fontes descartadas: < 40% fidelidade
+    # Tipos: resumos de terceiros, paráfrases, especulação
+    - id: "D-001"
+      title: "{Título}"
+      reason: "third_party_summary | paraphrase | speculation | unverifiable"
+      notes: ""
+
+# Análise de cobertura
+
+coverage:
+  temporal_span:
+    earliest_source_year: 0000
+    latest_source_year: 0000
+    span_years: 0
+    # Recomendado: >= 5 anos para capturar evolução do pensamento
+
+  format_diversity:
+    has_books: false
+    has_long_interviews: false
+    has_courses: false
+    has_written_content: false
+    diversity_score: 0             # Contagem de tipos distintos (target: >= 3)
+
+  domain_coverage:
+    # Quais domínios do expert estão representados nas fontes
+    domains_covered: []            # Ex: [offers, leads, pricing]
+    domains_missing: []            # Domínios importantes sem fontes Tier 1
+
+# Gate G1 — Resultado
+
+gate_g1:
+  status: "PENDING | PASS | BLOCK"
+  tier1_found: 0
+  tier1_required: 3
+  message: ""
+  # PASS: tier1_found >= 3 → prosseguir para extração
+  # BLOCK: tier1_found < 3 → aguardar mais fontes antes de extrair
+
+# Notas do processo
+
+discovery_notes: ""
+# Documenta: como as fontes foram encontradas, limitações, fontes tentadas mas não encontradas
+
+# Prioridade de extração (ordem recomendada para tasks 02-05)
+extraction_priority:
+  - id: "T1-001"
+    reason: "Fonte mais rica disponível"
+  # - id: "T1-002"
+  #   reason: "..."

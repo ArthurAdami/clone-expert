@@ -1,0 +1,338 @@
+# extraction-dimensions.yaml
+# As 6 dimensões de extração para capturar o DNA completo de um expert
+# Cada dimensão mapeia para uma ou mais tasks e componentes do DNA
+
+# =============================================================================
+# VISÃO GERAL
+# =============================================================================
+
+overview:
+  total_dimensions: 6
+  covers:
+    - "Como o expert pensa (raciocínio)"
+    - "Como o expert fala (linguagem)"
+    - "Como o expert age (comportamento)"
+    - "O que o expert acredita (valores)"
+    - "O que o expert ensina (domínios)"
+    - "Como o expert responde (exemplos reais)"
+  output_maps_to:
+    thinking_dna: ["dimensao_1"]
+    voice_dna: ["dimensao_2"]
+    behavioral_dna: ["dimensao_3"]
+    values_dna: ["dimensao_4"]
+    clone_type_config: ["dimensao_5"]
+    output_examples: ["dimensao_6"]
+
+
+# =============================================================================
+# DIMENSÃO 1 — ESTRUTURA DE RACIOCÍNIO
+# Maps to: thinking_dna
+# =============================================================================
+
+dimensao_1:
+  nome: "Estrutura de Raciocínio"
+  descricao: >
+    Como o expert processa problemas. A sequência mental que ele segue,
+    os modelos que aplica, as regras que usa para decidir.
+  task: "02-extract-thinking-dna.md"
+
+  subdimensoes:
+
+    1a_primary_framework:
+      label: "Framework Primário"
+      question: "Qual é o ÚNICO modelo mais central que o expert aplica a tudo?"
+      extraction_signal: >
+        Framework que aparece em livro, entrevista e conteúdo recente.
+        Framework que o expert menciona quando perguntado sobre sua metodologia.
+      output: "thinking_dna.primary_framework"
+      example: "Value Equation (Hormozi), Jobs to Be Done (Christensen), Deep Work (Newport)"
+
+    1b_mental_models:
+      label: "Modelos Mentais"
+      question: "Quais frameworks específicos o expert usa para analisar situações?"
+      extraction_signal: >
+        Modelos nomeados pelo expert. Frameworks com estrutura clara.
+        Conceitos que ele explica múltiplas vezes em detalhes.
+      output: "thinking_dna.mental_models"
+      max_models: 8
+      priority: "MM_001 = Master Model, MM_002+ = Supporting"
+
+    1c_decision_tree:
+      label: "Árvore de Decisão"
+      question: "Qual é a SEQUÊNCIA que o expert usa para abordar problemas?"
+      extraction_signal: >
+        "Primeiro eu faço X, então Y..."
+        "Sempre começo por..."
+        "A pergunta que faço primeiro é..."
+      output: "thinking_dna.decision_tree"
+      steps_target: "4-6 passos"
+
+    1d_heuristics:
+      label: "Heurísticas"
+      question: "Quais são as regras práticas que o expert usa sem pensar muito?"
+      extraction_signal: >
+        Declarações SE → ENTÃO.
+        "Quando vejo X, sempre faço Y."
+        "A regra que eu sigo é..."
+      output: "thinking_dna.heuristics"
+      target: "5-7 heurísticas"
+
+    1e_veto_conditions:
+      label: "Condições de Veto"
+      question: "O que o expert NUNCA faz ou NUNCA recomenda?"
+      extraction_signal: >
+        "Eu nunca recomendo..."
+        "A pior coisa que você pode fazer é..."
+        Situações onde o expert imediatamente rejeita uma abordagem
+      output: "thinking_dna.veto_conditions"
+      target: "3-5 vetos claros"
+
+
+# =============================================================================
+# DIMENSÃO 2 — LINGUAGEM E VOZ
+# Maps to: voice_dna
+# =============================================================================
+
+dimensao_2:
+  nome: "Linguagem e Voz"
+  descricao: >
+    As palavras específicas do expert. Frases que só ele usa.
+    O ritmo, o tom, a cadência do discurso.
+  task: "03-extract-voice-dna.md"
+
+  subdimensoes:
+
+    2a_exclusive_vocabulary:
+      label: "Vocabulário Exclusivo"
+      question: "Quais termos o expert usa que OUTROS NÃO usam para o mesmo conceito?"
+      extraction_signal: >
+        Palavras capitalizadas pelo expert.
+        Termos que o expert define explicitamente.
+        Conceitos que o expert diferencia de termos genéricos.
+      output: "voice_dna.vocabulary.always_use"
+      unicidade_test: "Outro expert do mesmo campo usaria o mesmo termo para o mesmo conceito?"
+      target: "8-12 termos"
+
+    2b_forbidden_vocabulary:
+      label: "Vocabulário Proibido"
+      question: "Quais termos o expert EVITA ou CRITICA explicitamente?"
+      extraction_signal: >
+        "Eu nunca uso a palavra X porque..."
+        Termos que o expert substitui ativamente.
+        Linguagem que o expert critica em outros.
+      output: "voice_dna.vocabulary.never_use"
+      target: "3-6 termos"
+
+    2c_signature_phrases:
+      label: "Frases Assinatura"
+      question: "Quais frases completas o expert repete que só ele diria?"
+      extraction_signal: >
+        Frases que aparecem em múltiplas fontes.
+        Frases que viraram títulos, capítulos ou citações.
+        Frases que outras pessoas atribuem ao expert.
+      output: "voice_dna.signature_phrases.confirmed"
+      confirmation_threshold: "3+ ocorrências em fontes diferentes"
+      target: "5-8 frases confirmadas"
+
+    2d_metaphors:
+      label: "Metáforas Recorrentes"
+      question: "Quais metáforas o expert usa repetidamente para explicar conceitos?"
+      extraction_signal: >
+        "É como um..."
+        "Pense nisso como..."
+        Analogias específicas que o expert repete
+      output: "voice_dna.metaphors"
+      target: "3-5 metáforas"
+
+    2e_tone_profile:
+      label: "Perfil de Tom"
+      question: "Como é o estilo de comunicação do expert?"
+      extraction_dimensions:
+        - "Diretividade: muito direto ↔ diplomático"
+        - "Certeza: assertivo ↔ tentativo"
+        - "Formalidade: formal ↔ casual"
+        - "Complexidade: técnico ↔ simples"
+        - "Emoção: seco ↔ expressivo"
+      output: "voice_dna.tone_profile"
+
+    2f_communication_patterns:
+      label: "Padrões de Comunicação"
+      question: "Qual é a estrutura típica de como o expert responde?"
+      examples:
+        - "Diagnóstico antes de prescrição (Hormozi)"
+        - "Pergunta de volta antes de responder (Buffett)"
+        - "Exemplo concreto primeiro, framework depois"
+        - "Números antes de narrativa"
+      output: "voice_dna.communication_patterns"
+
+
+# =============================================================================
+# DIMENSÃO 3 — PADRÕES COMPORTAMENTAIS
+# Maps to: behavioral_dna
+# =============================================================================
+
+dimensao_3:
+  nome: "Padrões Comportamentais"
+  descricao: >
+    Como o expert reage a situações específicas. O que ativa seu modo de rejeição.
+    Como ele responde quando discorda ou quando vê um antipadrão.
+  task: "04-extract-behavioral-dna.md"
+
+  subdimensoes:
+
+    3a_behavioral_states:
+      label: "Estados Comportamentais"
+      question: "Em quais situações típicas o expert tem uma reação característica?"
+      extraction_signal: >
+        Situações que ativam energia especial no expert.
+        Respostas que ele dá de forma muito consistente.
+        Momentos onde o comportamento é claramente distinto.
+      output: "behavioral_dna.behavioral_states"
+      target: "3-6 estados com trigger + resposta"
+
+    3b_immune_system:
+      label: "Sistema Imune"
+      question: "O que ativa a resposta de rejeição/redirecionamento do expert?"
+      extraction_signal: >
+        "Não, isso está errado porque..."
+        "Essa é a coisa errada a fazer porque..."
+        Situações onde o expert interrompe e corrige ativamente
+      output: "behavioral_dna.immune_system"
+      target: "5-8 triggers com respostas"
+
+    3c_antipattern_rejection:
+      label: "Template de Rejeição de Antipadrões"
+      question: "Como é a estrutura da resposta do expert quando rejeita algo?"
+      extraction_signal: >
+        Frases de abertura quando discorda.
+        Estrutura: problema → princípio violado → consequência → alternativa
+      output: "behavioral_dna.antipattern_rejection_template"
+
+    3d_disagreement_style:
+      label: "Estilo de Discordância"
+      question: "Como o expert discorda? Diretamente? Com pergunta? Com framework?"
+      output: "behavioral_dna.disagreement_style"
+
+    3e_ambiguity_handling:
+      label: "Handling de Ambiguidade"
+      question: "Quando recebe uma pergunta vaga, o expert faz o quê primeiro?"
+      output: "behavioral_dna.ambiguity_handling"
+
+
+# =============================================================================
+# DIMENSÃO 4 — SISTEMA DE VALORES
+# Maps to: values_dna
+# =============================================================================
+
+dimensao_4:
+  nome: "Sistema de Valores"
+  descricao: >
+    O que o expert acredita fundamentalmente. Suas crenças mais profundas
+    sobre o domínio, sobre pessoas, sobre o mundo.
+  task: "05-extract-values-dna.md"
+  note: "Extração opcional — aceito como parcial. Aumenta consistência filosófica do clone."
+
+  subdimensoes:
+
+    4a_value_hierarchy:
+      label: "Hierarquia de Valores"
+      question: "Quais são os 2-3 valores que o expert NUNCA compromete?"
+      output: "values_dna.value_hierarchy.tier1_existential"
+
+    4b_core_beliefs:
+      label: "Crenças Centrais"
+      question: "Quais crenças sobre o domínio o expert defende consistentemente?"
+      extraction_signal: >
+        "Eu acredito que..."
+        "A realidade é que..."
+        "A maioria das pessoas está errada sobre..."
+      output: "values_dna.core_beliefs"
+
+    4c_obsessions:
+      label: "Obsessões Recorrentes"
+      question: "Para onde o expert sempre volta, independente do tema?"
+      extraction_signal: >
+        Temas que aparecem em todos os contextos.
+        Coisas que o expert menciona sem ser perguntado.
+        "Sempre volto a isso porque..."
+      output: "values_dna.obsessions"
+
+    4d_non_negotiables:
+      label: "Non-Negotiables"
+      question: "O que o expert absolutamente nunca faz, sem exceção?"
+      output: "values_dna.non_negotiables"
+
+
+# =============================================================================
+# DIMENSÃO 5 — DOMÍNIOS DE EXPERTISE
+# Maps to: clone_type_config
+# =============================================================================
+
+dimensao_5:
+  nome: "Domínios de Expertise"
+  descricao: >
+    Os campos específicos onde o expert vai em profundidade.
+    Usado para definir o tamanho e arquitetura do Squad (todo clone é Squad).
+  task: "07-design-squad-architecture.md"
+
+  subdimensoes:
+
+    5a_domain_mapping:
+      label: "Mapeamento de Domínios"
+      question: "Em quais áreas específicas o expert produz conteúdo em profundidade?"
+      evaluation:
+        - "Nome do domínio"
+        - "Volume de conteúdo (alto/médio/baixo)"
+        - "Profundidade (especialista/bom/superficial)"
+        - "Sobreposição com outros domínios (alta/média/baixa)"
+        - "Justifica especialista próprio? (true/false)"
+        - "Tier sugerido: 1 (core) / 2 (execução) / 3 (estratégia)"
+      output: "clone_config"
+
+    5b_specialist_design:
+      label: "Design dos Especialistas do Squad"
+      question: "Quais especialistas criar e como organizá-los em tiers?"
+      note: "Todo clone é Squad — a variação é o número de especialistas (3-15)"
+      output: "clone_config.squad_architecture"
+
+
+# =============================================================================
+# DIMENSÃO 6 — EXEMPLOS REAIS
+# Maps to: output_examples
+# =============================================================================
+
+dimensao_6:
+  nome: "Exemplos Reais Input/Output"
+  descricao: >
+    Pares de situação/resposta reais que demonstram o DNA em ação.
+    Esses exemplos são o calibrador — onde o modelo aprende o
+    que 'soar como o expert' significa na prática.
+  task: "Extraído ao longo de tasks 02-04, consolidado em 08"
+
+  subdimensoes:
+
+    6a_diagnostic_example:
+      label: "Exemplo de Diagnóstico"
+      question: "Como o expert aborda um problema típico do domínio?"
+      should_demonstrate: ["primary_framework", "decision_tree", "vocabulary"]
+
+    6b_rejection_example:
+      label: "Exemplo de Rejeição"
+      question: "Como o expert rejeita um antipadrão?"
+      should_demonstrate: ["immune_system", "rejection_template", "veto_conditions"]
+
+    6c_teaching_example:
+      label: "Exemplo de Ensino"
+      question: "Como o expert explica o conceito mais importante?"
+      should_demonstrate: ["master_model", "signature_phrases", "communication_style"]
+
+    6d_advice_example:
+      label: "Exemplo de Conselho Estratégico"
+      question: "Como o expert prescreve uma ação?"
+      should_demonstrate: ["heuristics", "domain_expertise", "always_use_vocabulary"]
+
+  quality_criteria:
+    - "Cada exemplo demonstra pelo menos 2 elementos do DNA"
+    - "Nenhum exemplo poderia ser de outro expert do campo"
+    - "Pelo menos 1 exemplo vem de fonte verificável (não composto)"
+    - "Exemplos cobrem diferentes modos/especialistas do clone"

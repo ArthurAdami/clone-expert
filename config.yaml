@@ -1,0 +1,281 @@
+# Clone Expert — System Configuration v1.0
+
+system:
+  name: "Clone Expert"
+  version: "1.0.0"
+  description: "Fábrica de clones de experts via extração de DNA"
+  entry_agent: clone-expert
+
+  # Escopo de instalação do agente gerado
+  # "global" → ~/.claude/commands/  (disponível em todos os projetos)
+  # "local"  → .claude/commands/    (disponível só no projeto atual)
+  # "ask"    → perguntar ao user na task 07 (default recomendado)
+  default_scope: ask
+
+  # Paths de instalação por escopo
+  install_paths:
+    global: "~/.claude/commands/"
+    local: ".claude/commands/"
+
+# Thresholds de qualidade
+quality:
+  fidelity:
+    minimum_to_generate: 40      # Abaixo disso: bloquear geração
+    minimum_viable: 60           # Clone funcional
+    production_ready: 80         # Clone de alta fidelidade
+
+  sources:
+    minimum_tier1: 3             # Mínimo de fontes Tier 1
+    minimum_total: 5             # Mínimo total de fontes
+    minimum_words_per_source: 2000
+    minimum_minutes_per_audio: 20
+
+  extraction:
+    minimum_frameworks: 3        # Mental models / frameworks
+    minimum_signature_phrases: 5 # Frases assinatura confirmadas
+    minimum_vocabulary_terms: 8  # Termos de vocabulário exclusivo
+    minimum_behavioral_states: 3 # Padrões comportamentais
+    minimum_examples: 3          # Input/output examples
+    minimum_citations_per_pattern: 3  # Confirmações cruzadas
+
+# Classificação de fontes
+source_tiers:
+  tier1:
+    label: "Ouro"
+    fidelity: "90-95%"
+    types:
+      - "Livros escritos pelo expert"
+      - "Cursos/programas gravados pelo expert"
+      - "Entrevistas longas (1h+) adversariais"
+      - "Transcrições de palestras ao vivo"
+      - "Newsletters escritas pelo expert (arquivo completo)"
+
+  tier2:
+    label: "Prata"
+    fidelity: "70-85%"
+    types:
+      - "Podcasts como guest (30-60 min)"
+      - "YouTube: vídeos educacionais longos (20min+)"
+      - "Blog posts extensos (2000+ palavras)"
+      - "Q&A em eventos gravados"
+
+  tier3:
+    label: "Bronze"
+    fidelity: "40-60%"
+    types:
+      - "Clips curtos (< 5 min)"
+      - "Posts de redes sociais"
+      - "Entrevistas como entrevistador"
+      - "Citações em artigos de terceiros"
+
+  discard:
+    label: "Lixo"
+    fidelity: "< 40%"
+    types:
+      - "Resumos de terceiros"
+      - "Paráfrases sem fonte verificável"
+      - "Especulação sobre o que X diria"
+
+# Tipo de clone — todo clone é um Squad
+# Não existe Single Persona. Qualquer expert, independente de escopo,
+# é representado como um Squad Orchestrator com especialistas em tiers.
+# A variação está no número de especialistas, não no tipo de arquitetura.
+clone_types:
+  squad:
+    name: "Squad (Orchestrator)"
+    description: "Todo clone é um orchestrator com especialistas em tiers"
+    template: "templates/squad-agent.md"
+    specialist_range:
+      min: 3           # Experts focados (3-5 Tier 1 sources)
+      typical: 8       # Experts padrão (5-9 Tier 1 sources)
+      max: 15          # Experts prolíficos (10+ Tier 1 sources)
+    tier_structure:
+      tier0: "Orchestrator (Chief) — diagnostica, roteia, aconselha"
+      tier1: "Core Specialists — domínios centrais (2-3 especialistas)"
+      tier2: "Execution Specialists — aplicação prática (2-5 especialistas)"
+      tier3: "Strategic Specialists — diagnóstico e estratégia (1-3 especialistas)"
+    examples:
+      - "Alex Hormozi (15 specialists) — expert prolífico"
+      - "Alfredo Soares (12 specialists) — expert com foco em B2B"
+      - "Tallis Gomes (8 specialists) — expert focado em liderança/startup"
+      - "Seth Godin (5 specialists) — expert de domínio único (ainda Squad)"
+      - "Warren Buffett (4 specialists) — expert ultra-focado (ainda Squad)"
+
+# Pareto Filter
+pareto_filter:
+  genius:
+    threshold: "0.8%"
+    label: "GENIAL"
+    description: "Insights únicos que só esse expert tem"
+    action: "OBRIGATÓRIO no clone"
+
+  excellence:
+    threshold: "4%"
+    label: "EXCELENTE"
+    description: "Frameworks aplicados, frases repetidas em múltiplas fontes"
+    action: "INCLUIR no clone"
+
+  useful:
+    threshold: "20%"
+    label: "ÚTIL"
+    description: "Conteúdo de qualidade mas não exclusivo"
+    action: "INCLUIR se reforça padrão único"
+
+  noise:
+    threshold: "76%"
+    label: "RUÍDO"
+    description: "Genérico, comum ao domínio, qualquer um diria"
+    action: "DESCARTAR"
+
+# Pipeline de extração
+#
+# blocking: true  → falha IMPEDE continuação do pipeline (hard gate)
+# blocking: false → falha NÃO impede, mas o output é parcial/incompleto
+# partial_allowed → define se resultado parcial é aceito para avançar
+# sequential_after → esta fase DEVE rodar após a fase indicada (dependência de ordem)
+#
+# Nota sobre fases 02-05: são executadas em SEQUÊNCIA (02→03→04→05), não em paralelo.
+# A razão é que o Thinking DNA (02) informa como interpretar Voice (03) e Behavioral (04).
+# "blocking: false" aqui significa que um DNA parcial não bloqueia os próximos,
+# mas NÃO significa que podem ser executados simultaneamente.
+
+extraction_pipeline:
+  phases:
+    - id: "01"
+      name: "source-discovery"
+      task: "tasks/01-source-discovery.md"
+      output: "sources.yaml"
+      template: "templates/sources-template.yaml"
+      blocking: true
+      min_tier1_sources: 3
+
+    - id: "02"
+      name: "extract-thinking-dna"
+      task: "tasks/02-extract-thinking-dna.md"
+      output: "thinking_dna.yaml"
+      blocking: false
+      partial_allowed: true        # DNA incompleto aceito — marcado como partial
+      sequential_after: "01"       # Deve rodar após source-discovery
+
+    - id: "03"
+      name: "extract-voice-dna"
+      task: "tasks/03-extract-voice-dna.md"
+      output: "voice_dna.yaml"
+      blocking: false
+      partial_allowed: true
+      sequential_after: "02"       # Deve rodar após thinking-dna (thinking informa voice)
+
+    - id: "04"
+      name: "extract-behavioral-dna"
+      task: "tasks/04-extract-behavioral-dna.md"
+      output: "behavioral_dna.yaml"
+      blocking: false
+      partial_allowed: true
+      sequential_after: "03"       # Deve rodar após voice-dna
+
+    - id: "05"
+      name: "extract-values-dna"
+      task: "tasks/05-extract-values-dna.md"
+      output: "values_dna.yaml"
+      blocking: false
+      partial_allowed: true        # values_dna é o mais difícil — parcial frequente
+      sequential_after: "04"
+
+    - id: "06"
+      name: "validate-extraction"
+      task: "tasks/06-validate-extraction.md"
+      output: "validation_report.yaml"
+      blocking: true
+      min_fidelity_score: 40
+
+    - id: "07"
+      name: "decide-clone-type"
+      task: "tasks/07-decide-clone-type.md"
+      output: "clone_type.yaml"
+      blocking: true
+
+    - id: "08"
+      name: "generate-agent"
+      task: "tasks/08-generate-agent.md"
+      output: "{expert-name}.md"
+      blocking: true
+
+    - id: "09"
+      name: "smoke-test"
+      task: "tasks/09-smoke-test.md"
+      output: "smoke_test_report.yaml"
+      blocking: false
+
+# Fidelity Score — pesos por componente
+fidelity_scoring:
+  components:
+    frameworks_unicos:
+      weight: 10
+      max_points: 30
+      description: "Mental models / frameworks exclusivos confirmados"
+
+    frases_assinatura:
+      weight: 5
+      max_points: 25
+      description: "Frases confirmadas em 3+ fontes"
+
+    padroes_comportamentais:
+      weight: 8
+      max_points: 24
+      description: "Behavioral states com trigger + resposta documentados"
+
+    vocabulario_exclusivo:
+      weight: 3
+      max_points: 15
+      description: "Termos always_use + never_use mapeados"
+
+    exemplos_output:
+      weight: 2
+      max_points: 6
+      description: "Input/output examples reais com citações"
+
+  total_max: 100
+  formula: "min(frameworks×10,30) + min(frases×5,25) + min(comportamento×8,24) + min(vocabulario×3,15) + min(exemplos×2,6)"
+  note: "Cada componente tem cap máximo. Score total nunca ultrapassa 100."
+
+# Artefatos do pipeline — onde cada fase salva seus outputs
+artifacts:
+  output_dir: "clone-expert/output/{expert-slug}/"
+  note: "Criar a pasta antes de iniciar o pipeline. Ex: clone-expert/output/seth-godin/"
+  files:
+    - name: "sources.yaml"
+      produced_by: "fase 01"
+      required_by: ["fase 02", "fase 03", "fase 04", "fase 05"]
+
+    - name: "thinking_dna.yaml"
+      produced_by: "fase 02"
+      required_by: ["fase 06", "fase 08"]
+
+    - name: "voice_dna.yaml"
+      produced_by: "fase 03"
+      required_by: ["fase 06", "fase 08"]
+
+    - name: "behavioral_dna.yaml"
+      produced_by: "fase 04"
+      required_by: ["fase 06", "fase 08"]
+
+    - name: "values_dna.yaml"
+      produced_by: "fase 05"
+      required_by: ["fase 08"]
+      optional: true
+
+    - name: "validation_report.yaml"
+      produced_by: "fase 06"
+      required_by: ["fase 07"]
+
+    - name: "clone_type.yaml"
+      produced_by: "fase 07"
+      required_by: ["fase 08"]
+
+    - name: "{expert-name}.md"
+      produced_by: "fase 08"
+      required_by: ["fase 09"]
+      final_output: true
+
+    - name: "smoke_test_report.yaml"
+      produced_by: "fase 09"

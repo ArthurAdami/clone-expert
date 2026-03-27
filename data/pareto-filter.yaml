@@ -1,0 +1,221 @@
+# pareto-filter.yaml
+# Filtro de Pareto para extração de DNA de experts
+# Princípio: 4% do conteúdo contém 80% do DNA real
+
+# =============================================================================
+# DEFINIÇÃO DOS TIERS
+# =============================================================================
+
+pareto_tiers:
+
+  tier_genius:
+    percentile: "top 0.8%"
+    label: "Genius Moments"
+    description: >
+      Momentos onde o expert articula algo genuinamente único que nenhum outro
+      profissional do domínio diria. Frameworks originais, insights contrários ao
+      senso comum, frases que se tornaram memes do campo.
+    weight: 10
+    extract_to:
+      - thinking_dna.mental_models (MM_001 — Master Model)
+      - voice_dna.signature_phrases (confirmed, highest priority)
+      - behavioral_dna.antipattern_rejection_template
+
+    indicators:
+      - Plateia reage com silêncio ou surpresa
+      - Entrevistador para e repete a frase
+      - Frase se torna título de artigo ou vídeo
+      - Frase aparece em citações de outros experts
+      - Expert repete em múltiplos contextos diferentes
+      - Vai contra o consenso do campo
+
+    examples:
+      - "The offer is everything. Fix the offer before touching anything else." (Hormozi)
+      - "People don't buy products; they hire them to do a job." (Christensen)
+      - "If you can't describe what you are doing as a process, you don't know what you're doing." (Deming)
+
+
+  tier_excellent:
+    percentile: "top 4%"
+    label: "Excellent Content"
+    description: >
+      Frameworks explicados com clareza, metodologias detalhadas, exemplos reais
+      com números. Conteúdo que representa 80% do valor prático do expert.
+    weight: 5
+    extract_to:
+      - thinking_dna.mental_models (MM_002 a MM_008)
+      - thinking_dna.decision_tree
+      - thinking_dna.heuristics
+      - voice_dna.signature_phrases (confirmed)
+      - behavioral_dna.behavioral_states
+      - output_examples
+
+    indicators:
+      - Expert explica o "porquê" do framework
+      - Há estrutura clara (passos, componentes, fórmula)
+      - Usa números ou evidências específicas
+      - Demonstra domínio profundo (não só surface-level)
+      - Discute exceções e nuances
+
+    examples:
+      - Explicação detalhada do Value Equation com exemplos numéricos
+      - Walkthrough de case study com métricas reais
+      - Explicação de por que uma abordagem falha (com raciocínio)
+
+
+  tier_useful:
+    percentile: "top 20%"
+    label: "Useful Content"
+    description: >
+      Vocabulário específico, reforço de conceitos, variações de frameworks,
+      contexto adicional. Confirma padrões mas raramente introduz novos.
+    weight: 2
+    extract_to:
+      - voice_dna.vocabulary.always_use (confirmação)
+      - voice_dna.vocabulary.never_use (confirmação)
+      - thinking_dna.heuristics (confirmação)
+      - values_dna.core_beliefs (confirmação)
+
+    indicators:
+      - Reforça algo já dito de forma ligeiramente diferente
+      - Exemplo adicional do mesmo framework
+      - Resposta a pergunta do público que demonstra aplicação
+      - Terminologia específica usada mas não explicada
+
+    note: "Usar principalmente para CONFIRMAR padrões do Tier Genius/Excellent, não para extrair novos."
+
+
+  tier_noise:
+    percentile: "bottom 80%"
+    label: "Noise"
+    description: >
+      Conteúdo genérico, motivacional, introdutório, auto-promocional.
+      Não acrescenta ao DNA — apenas dilui se incluído.
+    weight: 0
+    do_not_extract: true
+
+    indicators:
+      - Qualquer consultor do campo diria o mesmo
+      - Não tem estrutura específica
+      - Motivacional puro ("você consegue", "acredite em si")
+      - Auto-promoção ou case de sucesso sem framework
+      - Introdução/contexto de conteúdo
+      - Agradecimentos, patrocinadores, CTAs
+
+    examples:
+      - "Vocês precisam acreditar no processo."
+      - "Meus clientes faturaram X depois de trabalhar comigo."
+      - "Essa estratégia mudou tudo para mim."
+
+
+# =============================================================================
+# REGRAS DE APLICAÇÃO
+# =============================================================================
+
+application_rules:
+
+  rule_1_scan_first:
+    description: "Sempre fazer scan completo antes de extrair"
+    procedure: |
+      1. Ler/ouvir conteúdo completo em velocidade 1.5x-2x
+      2. Marcar timestamps ou trechos onde expert diz algo diferente
+      3. Só depois voltar e extrair os marcados
+    why: "Extração prematura perde contexto e classifica mal o conteúdo"
+
+  rule_2_confirm_before_upgrade:
+    description: "Não promover conteúdo de Useful para Excellent sem confirmação"
+    procedure: |
+      Para promover um padrão de Useful → Excellent:
+      - Verificar se aparece em fonte diferente
+      - Verificar se há estrutura/framework por baixo
+      - SE SIM → promover
+      - SE NÃO → manter como confirmação apenas
+    why: "Evita inflar o fidelity score com conteúdo fraco"
+
+  rule_3_genius_threshold:
+    description: "Ser rigoroso com o tier Genius"
+    procedure: |
+      Para classificar como Genius:
+      - Teste 1: "Algum outro expert do campo diria exatamente isso?"
+        SE SIM → não é Genius
+      - Teste 2: "Essa frase/ideia tem nome próprio associado ao expert?"
+        SE SIM → provavelmente Genius
+      - Teste 3: "Essa ideia vai contra o senso comum do campo?"
+        SE SIM → forte candidato a Genius
+    why: "Genius moments são raros por definição. Inflar essa categoria destrói unicidade."
+
+  rule_4_noise_is_majority:
+    description: "Aceitar que 80% é noise — não tentar salvar"
+    procedure: |
+      Se um trecho não é claramente Useful, Excellent ou Genius → NOISE.
+      Não tentar "salvar" conteúdo mediocre.
+      Quantidade de Noise descartado é sinal de qualidade da extração.
+    why: "Incluir Noise dilui o DNA e cria clone genérico"
+
+  rule_5_sources_vary:
+    description: "Aplicar Pareto diferente por tipo de fonte"
+    by_source_type:
+      livro: "30-40% Useful/Excellent/Genius (bem editado, mais denso)"
+      curso: "25-35% (curado, mas mais repetição)"
+      entrevista_longa: "15-25% (muito contexto/intro)"
+      podcast_medio: "10-20% (mais genérico)"
+      clip_social: "5-15% (pode ser Genius mas geralmente sem contexto)"
+
+
+# =============================================================================
+# MATRIZ DE DECISÃO RÁPIDA
+# =============================================================================
+
+quick_decision_matrix:
+
+  question_1:
+    ask: "Só esse expert diria isso?"
+    yes: "Candidato a Genius ou Excellent"
+    no: "Provavelmente Noise ou Useful (confirmação)"
+
+  question_2:
+    ask: "Tem estrutura? (fórmula, passos, componentes)"
+    yes: "Candidato a Excellent"
+    no: "Genius (se único) ou Noise (se genérico)"
+
+  question_3:
+    ask: "Apareceu em outra fonte?"
+    yes: "Promover 1 tier (Useful→Excellent, Excellent→Genius candidato)"
+    no: "Manter no tier atual, aguardar confirmação"
+
+  question_4:
+    ask: "Vai contra senso comum do campo?"
+    yes: "Forte candidato a Genius — priorizar extração"
+    no: "Avaliar nos outros critérios"
+
+  question_5:
+    ask: "Qualquer coach/consultor do campo diria isso?"
+    yes: "NOISE — descartar"
+    no: "Continuar análise"
+
+
+# =============================================================================
+# MÉTRICAS DE QUALIDADE DA EXTRAÇÃO
+# =============================================================================
+
+quality_metrics:
+
+  ratio_genius_to_total:
+    healthy: "0.5-2% do total extraído"
+    warning: "> 5% (classificação muito generosa)"
+    alert: "0% (nenhum Genius encontrado — DNA sem identidade)"
+
+  ratio_excellent_to_total:
+    healthy: "3-8% do total extraído"
+    warning: "> 15% (pouco rigoroso)"
+    alert: "< 2% (DNA muito raso)"
+
+  ratio_noise_discarded:
+    healthy: "> 70% descartado"
+    warning: "< 50% (extração está pegando muito noise)"
+    note: "Descartar muito é sinal de qualidade, não de fracasso"
+
+  confirmation_rate:
+    target: "> 60% dos padrões confirmados em 2+ fontes"
+    minimum: "40% confirmados"
+    below_minimum: "DNA instável — requerer mais fontes"
