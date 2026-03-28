@@ -130,6 +130,14 @@ GAPS OPCIONAIS (melhoram fidelidade):
   [ ] Values DNA incompleto → Clone pode ter valores inconsistentes
   [ ] Metáforas < 3 → Comunicação menos característica
   [ ] Veto conditions < 2 → Clone não vai rejeitar adequadamente
+
+PENALIDADE VALUES DNA:
+  SE values_dna.yaml ausente OU veto_conditions < 2:
+    → Component C (behavioral) recebe penalidade: -4 pts
+    → Razão: veto conditions derivam dos valores — sem values DNA, behavioral fica incompleto
+    → Documentar no validation_report.yaml como values_dna_penalty: true
+  SE values_dna completo E veto_conditions >= 3:
+    → Registrar como "fidelidade comportamental alta" no report (sem alterar score)
 ```
 
 Para cada gap, identificar:
@@ -169,11 +177,15 @@ validation_date: ""
 fidelity_score:
   component_a_frameworks: 0
   component_b_phrases: 0
-  component_c_behavioral: 0
+  component_c_behavioral: 0          # inclui penalidade values_dna se aplicável
   component_d_vocabulary: 0
   component_e_examples: 0
+  values_dna_penalty: false          # true se values_dna ausente ou veto_conditions < 2
+  values_dna_penalty_applied: 0      # pts deduzidos do Component C (0 ou -4)
   total: 0
   classification: "raso | funcional | solido | alta_fidelidade"
+
+low_fidelity_flag: false             # true se total < 60 — aciona watermark no clone gerado
 
 gate_result: "PASS | WARN | BLOCK"
 gate_reason: ""

@@ -8,6 +8,44 @@
 
 ---
 
+## Pre-Flight Check
+
+Executar ANTES de qualquer extração:
+
+```
+[ ] output/{expert-slug}/behavioral_dna.yaml existe?
+[ ] behavioral_dna.yaml.immune_system tem >= 3 triggers?
+
+SE qualquer check falhar → BLOQUEAR:
+  "Task 05 bloqueada: Behavioral DNA incompleto ou ausente.
+   Execute *extract-behavior primeiro antes de continuar."
+```
+
+---
+
+## PARETO FILTER (aplicar antes de extrair qualquer item)
+
+Para cada crença ou valor identificado, classificar antes de registrar:
+
+```
+🔥 GENIAL (0.8%) — Crença ou princípio que define a visão de mundo única deste expert.
+   Confirmar em 3+ fontes. EXTRAIR OBRIGATORIAMENTE.
+
+💎 EXCELENTE (4%) — Valor que aparece em 3+ fontes como não-negociável.
+   INCLUIR no DNA.
+
+🚀 ÚTIL (20%) — Boa crença mas qualquer expert sério do domínio poderia ter.
+   INCLUIR apenas se especificamente associada a este expert.
+
+💩 RUÍDO (76%) — Valores genéricos de "pessoa íntegra e bem-sucedida".
+   DESCARTAR.
+
+Regra de ouro: SE o valor poderia aparecer no LinkedIn de qualquer profissional
+→ RUÍDO → descartar.
+```
+
+---
+
 ## Objetivo
 
 Extrair o que o expert considera não negociável. Os valores que filtram todas as decisões, as crenças centrais que aparecem mesmo quando ele não está ensinando, o que ele nunca abre mão.

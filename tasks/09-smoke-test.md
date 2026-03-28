@@ -37,7 +37,7 @@ Validar que o clone gerado se comporta como o expert real, não como um agente g
 
 ---
 
-## Os 3 Testes Obrigatórios
+## Os 4 Testes Obrigatórios (3 Comportamentais + Routing)
 
 ### Teste 1 — Fidelidade de Voz
 
@@ -129,14 +129,30 @@ Esperado: aplicação do primary framework → decision tree →
 
 ---
 
+### Teste 4 — Roteamento (OBRIGATÓRIO para Squad)
+
+**Todo clone é Squad — portanto este teste é sempre obrigatório.**
+
+```
+✓ PASS se:
+  - Input sobre domínio de especialista roteia para o especialista correto
+  - Agente NÃO responde diretamente — ativa o specialist file
+  - Pelo menos 3 rotas verificadas (uma por tier: Tier 1, Tier 2, Tier 3)
+
+✗ FAIL se:
+  - Agente responde diretamente sem rotear
+  - Routing aponta para specialist inexistente sem avisar
+  - Specialist file não encontrado → fallback silencioso (deve avisar)
+
+Inputs sugeridos:
+  - Tier 1: "[domínio core do expert]"
+  - Tier 2: "[domínio de execução/tático]"
+  - Tier 3: "[domínio estratégico/diagnóstico]"
+```
+
+---
+
 ## Testes Complementares (Opcionais)
-
-### Teste 4 — Roteamento (Tipo A apenas)
-
-```
-Input: "[domínio específico de um especialista]"
-Esperado: routing correto para o especialista certo, não resposta direta
-```
 
 ### Teste 5 — Contexto Mid-Conversation
 
@@ -155,6 +171,12 @@ Esperado: Mesmo tom, mesmo vocabulário, mesmos frameworks em todas
 ---
 
 ## Passo 1 — Preparar os Testes
+
+**Fonte de perguntas:** Carregar `data/smoke-test-questions.yaml` e selecionar perguntas do domínio do expert.
+- Identificar domínio primário (ex: marketing, vendas, liderança, empreendedorismo)
+- Selecionar 1 pergunta por categoria: voice_fidelity, behavioral_fidelity, reasoning_fidelity
+- SE domínio não listado → usar grupo `generic` e adaptar
+- Adaptar a pergunta ao expert específico antes de usar (substituir placeholders)
 
 Antes de executar, personalizar os 3 testes para o expert específico:
 
@@ -220,10 +242,19 @@ FAIL em Teste 3 (Raciocínio):
 ## Decisão Final
 
 ```
-3/3 PASS  → Clone aprovado para uso. Instalar.
-2/3 PASS  → Clone funcional mas imperfeito. Indicar qual área falhou.
-1/3 PASS  → Clone fraco. Recomendar reextração antes do uso.
-0/3 PASS  → Clone inválido. Reextração necessária.
+3/3 PASS  → PRE_APPROVED. Pré-validação aprovada.
+            Próximo passo OBRIGATÓRIO: instalar e executar teste manual.
+            Clone só está APROVADO após teste manual confirmar comportamento real.
+
+2/3 PASS  → FUNCTIONAL. Clone funcional mas com área fraca.
+            Indicar qual teste falhou e por quê. Entregar com aviso de limitação.
+            Executar teste manual da área fraca após instalação.
+
+1/3 PASS  → BLOQUEADO. Re-extração obrigatória antes de instalar.
+            Não entregar. Diagnosticar qual DNA está deficiente e corrigir.
+
+0/3 PASS  → INVÁLIDO. Re-extração necessária de todos os DNAs.
+            Não entregar. Retornar ao início do pipeline (fase 2).
 ```
 
 ---
@@ -263,7 +294,13 @@ tests:
 
 overall:
   passed: 0  # de 3
-  verdict: "APPROVED | FUNCTIONAL | WEAK | INVALID"
+  pre_validation_verdict: "PRE_APPROVED | FUNCTIONAL | BLOCKED | INVALID"
+  real_execution_status: "PENDING_MANUAL_TEST"  # nunca muda aqui — só após teste manual real
+  manual_test_results:
+    test_1_manual: "PENDING | PASS | FAIL"
+    test_2_manual: "PENDING | PASS | FAIL"
+    test_3_manual: "PENDING | PASS | FAIL"
+  final_verdict: "PENDING"  # só muda para APPROVED quando todos manual_test_results != PENDING
   recommendation: ""
   gaps_identified: []
   next_steps: ""
@@ -273,10 +310,11 @@ overall:
 
 ## Done When
 
-- [ ] 3 testes personalizados para o expert
-- [ ] Testes executados e avaliados
+- [ ] 3 testes principais personalizados para o expert
+- [ ] Teste 4 (Routing) executado — OBRIGATÓRIO para Squad (mínimo 3 rotas)
+- [ ] Testes executados e avaliados (usando perguntas de data/smoke-test-questions.yaml quando disponível)
 - [ ] Diagnóstico de falhas documentado (se houver)
-- [ ] Decisão final registrada
-- [ ] `smoke_test_report.yaml` produzido
-- [ ] SE aprovado: instruções de instalação entregues ao user
-- [ ] SE aprovado: lembrar user de executar teste manual após instalação
+- [ ] Decisão final registrada como pre_validation_verdict (não verdict final)
+- [ ] `smoke_test_report.yaml` produzido com real_execution_status: PENDING_MANUAL_TEST
+- [ ] SE PRE_APPROVED ou FUNCTIONAL: instruções de instalação + protocolo de teste manual entregues
+- [ ] SE BLOQUEADO ou INVÁLIDO: diagnóstico específico + próximo passo de re-extração entregues

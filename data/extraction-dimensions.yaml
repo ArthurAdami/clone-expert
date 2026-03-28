@@ -273,7 +273,7 @@ dimensao_5:
   descricao: >
     Os campos específicos onde o expert vai em profundidade.
     Usado para definir o tamanho e arquitetura do Squad (todo clone é Squad).
-  task: "07-design-squad-architecture.md"
+  task: "07-decide-clone-type.md"
 
   subdimensoes:
 

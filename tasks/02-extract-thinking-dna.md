@@ -8,6 +8,45 @@
 
 ---
 
+## Pre-Flight Check
+
+Executar ANTES de qualquer extração:
+
+```
+[ ] output/{expert-slug}/sources.yaml existe?
+[ ] sources.yaml.gate_passed == true?
+[ ] sources.yaml.tier1_count >= 3?
+
+SE qualquer check falhar → BLOQUEAR:
+  "Task 02 bloqueada: [motivo específico].
+   Execute *research {expert} e confirme gate_passed: true antes de continuar."
+```
+
+---
+
+## PARETO FILTER (aplicar antes de extrair qualquer item)
+
+Para cada framework ou modelo mental identificado, classificar antes de registrar:
+
+```
+🔥 GENIAL (0.8%) — Framework ou raciocínio que só este expert tem ou nomeou.
+   Confirmar em 3+ fontes. EXTRAIR OBRIGATORIAMENTE.
+
+💎 EXCELENTE (4%) — Modelo mental que aparece em 3+ fontes de forma consistente.
+   INCLUIR no DNA.
+
+🚀 ÚTIL (20%) — Bom framework, mas qualquer expert sério do domínio poderia ter.
+   INCLUIR apenas se especificamente associado a este expert.
+
+💩 RUÍDO (76%) — Frameworks genéricos de "bom pensador do domínio".
+   DESCARTAR.
+
+Regra de ouro: SE o framework poderia estar no livro de qualquer outro expert do domínio
+→ RUÍDO → descartar.
+```
+
+---
+
 ## Objetivo
 
 Extrair como o expert PENSA. Não o que ele sabe — como ele processa problemas, quais modelos mentais aplica, qual é a sequência de raciocínio dele.

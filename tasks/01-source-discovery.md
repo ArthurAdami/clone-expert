@@ -259,9 +259,64 @@ extraction_order:
 
 ---
 
+## Passo 6 — Criar pipeline-state.yaml
+
+Ao final da Task 01, criar o arquivo de estado do pipeline:
+
+```yaml
+# output/{expert-slug}/pipeline-state.yaml
+expert:
+  name: "{Expert Name}"
+  slug: "{expert-slug}"
+  started_at: "{YYYY-MM-DDTHH:MM:SS}"
+  last_updated: "{YYYY-MM-DDTHH:MM:SS}"
+
+pipeline:
+  current_phase: 1
+  completed_tasks: ["01"]
+  in_progress_task: null
+  blocking_task: null
+  resume_from: ""
+
+gates:
+  G1: { status: "PASSED | FAILED", tier1_count: 0, total_sources: 0 }
+  G2: { status: "PENDING", fidelity_score: null }
+  G3: { status: "PENDING", confirmed_by_user: false }
+  G4: { status: "PENDING", pre_validation_verdict: "" }
+
+fidelity:
+  current_score: null
+  components:
+    A_frameworks: null
+    B_phrases: null
+    C_behavioral: null
+    D_vocabulary: null
+    E_examples: null
+
+artifacts:
+  sources_yaml:       { exists: true,  completeness: "full", path: "output/{slug}/sources.yaml" }
+  thinking_dna:       { exists: false, completeness: null, framework_count: 0, path: "" }
+  voice_dna:          { exists: false, completeness: null, vocabulary_count: 0, phrases_count: 0, path: "" }
+  behavioral_dna:     { exists: false, completeness: null, states_count: 0, path: "" }
+  values_dna:         { exists: false, completeness: null, path: "" }
+  validation_report:  { exists: false, path: "" }
+  clone_type:         { exists: false, confirmed_by_user: false, path: "" }
+  agent_file:         { exists: false, path: "" }
+  smoke_test:         { exists: false, pre_validation_verdict: "", real_execution_status: "PENDING_MANUAL_TEST", path: "" }
+  pipeline_state:     { exists: true,  path: "output/{slug}/pipeline-state.yaml" }
+
+next_step: "tasks/02-extract-thinking-dna.md"
+blocked_reason: ""
+```
+
+**Instrução:** Cada task subsequente (02-09) deve atualizar `current_phase`, `completed_tasks`, e o artifact correspondente neste arquivo ao concluir.
+
+---
+
 ## Done When
 
 - [ ] Todas as fontes identificadas e classificadas
 - [ ] Gate 1 passado (≥ 3 Tier 1) OU alternativa acordada com user
 - [ ] Ordem de extração definida
 - [ ] `sources.yaml` produzido
+- [ ] `pipeline-state.yaml` criado em `output/{expert-slug}/`

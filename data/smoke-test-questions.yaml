@@ -1,0 +1,178 @@
+# Smoke Test Questions — Banco de Perguntas por Domínio
+# Usado pela task 09-smoke-test.md para personalizar os 3 testes obrigatórios
+# Selecionar perguntas do domínio do expert clonado
+
+version: "1.0"
+usage: |
+  1. Identificar o domínio primário do expert (ex: marketing, vendas, liderança)
+  2. Selecionar 1 pergunta de cada categoria para os 3 testes obrigatórios:
+     - Teste 1 (Voz): perguntas de voice_fidelity
+     - Teste 2 (Comportamento): perguntas de behavioral_fidelity
+     - Teste 3 (Raciocínio): perguntas de reasoning_fidelity
+  3. Adaptar a pergunta selecionada ao expert específico antes de usar
+
+# ─────────────────────────────────────────
+# DOMÍNIO: MARKETING & BRANDING
+# ─────────────────────────────────────────
+marketing:
+  voice_fidelity:
+    - "Me explica o conceito mais importante que você ensina sobre marketing."
+    - "Por que a maioria das estratégias de marketing falha?"
+    - "O que diferencia um produto notável de um produto medíocre?"
+    - "Como você pensa sobre audiência e posicionamento de marca?"
+
+  behavioral_fidelity:
+    - "Quero escalar meu negócio copiando o que meu maior concorrente faz."
+    - "Preciso de uma campanha viral para crescer rápido."
+    - "O marketing de conteúdo é perda de tempo. Prefiro anúncios pagos."
+    - "Meu produto é para todo mundo — como faço para atingir todo mundo?"
+
+  reasoning_fidelity:
+    - "Tenho um produto novo e não sei como posicioná-lo. Por onde começo?"
+    - "Minha estratégia de conteúdo não está gerando resultados. O que está errado?"
+    - "Como decidir entre aumentar o preço ou aumentar o volume de vendas?"
+    - "Minha marca está sendo copiada. O que fazer?"
+
+# ─────────────────────────────────────────
+# DOMÍNIO: VENDAS & CRESCIMENTO
+# ─────────────────────────────────────────
+sales:
+  voice_fidelity:
+    - "Me explica como você pensa sobre o processo de vendas."
+    - "Qual é o erro mais comum que você vê em times de vendas?"
+    - "O que separa uma empresa que vende de uma empresa que escala vendas?"
+    - "Como você define sucesso em vendas?"
+
+  behavioral_fidelity:
+    - "Meu melhor vendedor fecha tudo. Preciso que os outros façam o que ele faz."
+    - "Vou escalar o time de vendas de 5 para 50 pessoas esse mês."
+    - "Preço é meu diferencial — sou mais barato que todos os concorrentes."
+    - "Não preciso de CRM. Meu time tem boa memória."
+
+  reasoning_fidelity:
+    - "Meu funil tem muitos leads mas poucos fechamentos. O que verificar?"
+    - "Como estruturar o onboarding de um novo vendedor para que ele seja produtivo rápido?"
+    - "Meu churn está alto mas as vendas novas estão crescendo. É um problema?"
+    - "Tenho duas oportunidades: dobrar o ticket médio ou dobrar o volume. O que priorizo?"
+
+# ─────────────────────────────────────────
+# DOMÍNIO: LIDERANÇA & GESTÃO
+# ─────────────────────────────────────────
+leadership:
+  voice_fidelity:
+    - "Me explica o que você acredita sobre liderança."
+    - "Qual é a coisa mais importante que um líder precisa fazer?"
+    - "O que diferencia um time de alta performance de um time mediano?"
+    - "Como você pensa sobre cultura organizacional?"
+
+  behavioral_fidelity:
+    - "Preciso microgerenciar meu time para garantir qualidade."
+    - "Vou dar feedback apenas nas avaliações anuais de desempenho."
+    - "Meu melhor funcionário está pedindo aumento. Vou dar para não perdê-lo."
+    - "Não preciso me preocupar com cultura agora. Isso é coisa de empresa grande."
+
+  reasoning_fidelity:
+    - "Meu time está desmotivado mas a entrega é boa. Preciso me preocupar?"
+    - "Dois líderes sênior estão em conflito. Como abordar a situação?"
+    - "Preciso escalar o time de 10 para 100 pessoas. Por onde começar?"
+    - "Como identificar se alguém está pronto para uma promoção?"
+
+# ─────────────────────────────────────────
+# DOMÍNIO: EMPREENDEDORISMO & STARTUPS
+# ─────────────────────────────────────────
+entrepreneurship:
+  voice_fidelity:
+    - "Me explica sua visão sobre o que faz uma startup ter sucesso."
+    - "Qual é o maior erro que você vê empreendedores cometendo?"
+    - "O que você acredita sobre validação de produto?"
+    - "Como você pensa sobre o risco no empreendedorismo?"
+
+  behavioral_fidelity:
+    - "Tenho uma ideia incrível. Vou construir o produto antes de falar com clientes."
+    - "Preciso de investimento para validar minha ideia."
+    - "Vou esperar o produto estar perfeito antes de lançar."
+    - "Minha startup está crescendo. Hora de contratar muita gente."
+
+  reasoning_fidelity:
+    - "Recebi uma proposta de aquisição. Como avaliar se devo aceitar?"
+    - "Tenho um MVP mas não sei se tenho product-market fit. Como descobrir?"
+    - "Dois co-founders estão discordando sobre a direção do produto. O que fazer?"
+    - "Estou entre pivotar ou persistir. Como tomar essa decisão?"
+
+# ─────────────────────────────────────────
+# DOMÍNIO: FINANÇAS & INVESTIMENTOS
+# ─────────────────────────────────────────
+finance:
+  voice_fidelity:
+    - "Me explica como você pensa sobre construção de riqueza."
+    - "Qual é o erro mais comum que as pessoas cometem com dinheiro?"
+    - "O que você acredita sobre risco e retorno?"
+    - "Como você avalia um investimento?"
+
+  behavioral_fidelity:
+    - "Vou colocar tudo em uma única ação que tem potencial enorme."
+    - "Timing the market é a chave para ganhar dinheiro."
+    - "Preciso de retornos rápidos — investimento de longo prazo é para quem tem paciência."
+    - "Uma dica quente: essa ação vai dobrar em 3 meses."
+
+  reasoning_fidelity:
+    - "Tenho R$100k para investir e não sei por onde começar."
+    - "Minha carteira caiu 30%. Devo vender agora para evitar mais perdas?"
+    - "Devo pagar dívidas ou investir o dinheiro que tenho?"
+    - "Como avaliar se um negócio é um bom investimento?"
+
+# ─────────────────────────────────────────
+# DOMÍNIO: PRODUTIVIDADE & PERFORMANCE PESSOAL
+# ─────────────────────────────────────────
+productivity:
+  voice_fidelity:
+    - "Me explica como você pensa sobre produtividade."
+    - "Qual é o maior inimigo da performance pessoal?"
+    - "O que você acredita sobre foco e gestão de energia?"
+    - "Como você diferencia o que é urgente do que é importante?"
+
+  behavioral_fidelity:
+    - "Quero ser mais produtivo fazendo mais coisas ao mesmo tempo."
+    - "Vou trabalhar 16 horas por dia para compensar o tempo perdido."
+    - "Preciso de uma ferramenta melhor para me organizar."
+    - "Ser ocupado é sinal de que estou sendo produtivo."
+
+  reasoning_fidelity:
+    - "Tenho 40 tarefas na lista e não sei por onde começar. Como priorizar?"
+    - "Sinto que trabalho muito mas produzo pouco. O que pode ser?"
+    - "Como criar um sistema de trabalho que funcione mesmo quando não tenho motivação?"
+    - "Minha agenda está sempre lotada mas sinto que não avanço no que importa."
+
+# ─────────────────────────────────────────
+# DOMÍNIO: GENÉRICO (fallback para domínios não listados)
+# ─────────────────────────────────────────
+generic:
+  voice_fidelity:
+    - "Me explica o conceito mais importante que você ensina."
+    - "Qual é o maior erro que você vê as pessoas cometendo na sua área?"
+    - "O que você acredita que a maioria das pessoas entende errado sobre [domínio]?"
+    - "Como você define sucesso na sua área?"
+
+  behavioral_fidelity:
+    - "Quero o atalho mais rápido para [resultado desejado na área do expert]."
+    - "[Afirmação que contradiz o princípio central do expert]."
+    - "[Situação que viola um veto condition documentado no behavioral_dna]."
+    - "Pode simplesmente me dizer o que fazer sem explicar o porquê?"
+
+  reasoning_fidelity:
+    - "[Problema complexo típico do domínio do expert que requer o primary framework]."
+    - "Tenho [situação com múltiplas variáveis] — o que você faria no meu lugar?"
+    - "[Dilema entre dois caminhos que o decision tree do expert resolve]."
+    - "Como você abordaria [problema que parece simples mas tem complexidade oculta]?"
+
+# ─────────────────────────────────────────
+# INSTRUÇÕES DE USO PARA A TASK 09
+# ─────────────────────────────────────────
+selection_guide:
+  step1: "Identificar domínio primário do expert clonado"
+  step2: "Selecionar 1 pergunta de cada categoria (voice / behavioral / reasoning)"
+  step3: "Adaptar a pergunta: substituir '[domínio]', '[expert]' etc. pelo contexto real"
+  step4: "Para Teste 2 (behavioral): verificar no behavioral_dna.yaml os veto conditions e immune_system triggers — a pergunta deve ativar um deles especificamente"
+  step5: "Para Teste 3 (reasoning): verificar o primary_framework no thinking_dna.yaml — a pergunta deve requerer exatamente esse framework"
+  fallback: "Se o domínio não estiver listado: usar perguntas do grupo 'generic' e adaptar"
+  note: "Quanto mais específica a pergunta ao expert real, mais diagnóstico o teste é"

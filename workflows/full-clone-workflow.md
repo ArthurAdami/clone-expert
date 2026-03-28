@@ -56,7 +56,7 @@ START
   ├─── WARN (40-59) → Confirmar com user antes de continuar
   │
   ▼
-[07] design-squad-architecture
+[07] decide-clone-type
   │   Output: clone_type.yaml (Squad — quantos specs, quais tiers)
   │   Confirmação do user obrigatória
   │

@@ -16,6 +16,27 @@ Injetar o payload extraído no container universal e gerar o arquivo `.md` final
 
 ---
 
+## Passo 0.5 — Verificar Existência de Clone Anterior
+
+ANTES de qualquer geração, verificar:
+
+```
+[ ] output/{expert-slug}/{expert-name}.md já existe?
+
+SE existe:
+  → Reportar: "Clone {expert} já existe (gerado em: {data do comentário HTML no final do arquivo})"
+  → Perguntar:
+    (A) Sobrescrever — renomeia anterior para {expert-name}-backup-{YYYY-MM-DD}.md e gera novo
+    (B) Criar versão paralela — gera como {expert-name}-v2.md sem alterar o original
+    (C) Cancelar — interromper geração
+
+SE não existe:
+  → Criar diretório output/{expert-slug}/ se necessário
+  → Prosseguir para Passo 1
+```
+
+---
+
 ## Passo 1 — Preparar o Payload Completo
 
 Antes de gerar, verificar que todos os componentes estão prontos:
@@ -35,11 +56,20 @@ SE qualquer item crítico faltando → BLOQUEAR e reportar
 
 ---
 
-## Passo 2 — Selecionar Template
+## Passo 2 — Selecionar Template e Carregar Field Mapping
 
 ```
 Todo clone usa templates/squad-agent.md
 (não existe Single Persona — todo clone é Squad)
+
+OBRIGATÓRIO: Carregar templates/field-mapping.yaml antes de injetar qualquer campo.
+O field-mapping.yaml define:
+  - Qual campo do YAML fonte mapeia para qual placeholder do template
+  - O formato correto de cada seção (yaml_block, numbered_list, SE/ENTÃO, etc.)
+  - Onde cada campo aparece (pode aparecer em múltiplas seções)
+
+Seguir o mapeamento campo-a-campo. Dois executores com o mesmo DNA devem
+produzir o mesmo output.
 ```
 
 ---
@@ -203,15 +233,24 @@ Antes de entregar o arquivo:
 
 ```
 CHECKLIST FINAL:
-  [ ] Todos os placeholders [XXX] substituídos?
+  [ ] Nenhum placeholder {XXX} restante no arquivo? (buscar por { no output)
   [ ] Pelo menos 1 [SOURCE:] em cada seção principal?
-  [ ] Vocabulário proibido não aparece no body do agente?
-  [ ] Frases assinatura aparecem nos exemplos?
+  [ ] Vocabulário proibido NÃO aparece no body do agente?
+  [ ] Frases assinatura aparecem nos exemplos e no closing?
   [ ] Immune system cobre os veto conditions?
   [ ] Greeting exibe todos os especialistas/modos?
-  [ ] Dependencies lista todos os arquivos necessários?
-  [ ] Nota de fallback presente nas dependencies?
+  [ ] Dependencies lista todos os arquivos com paths em output/, não squads/?
+  [ ] Todos os paths de specialists em DEPENDENCIES existem fisicamente?
+      → SE path não existe: REPORTAR (não silenciar com fallback)
+  [ ] Nota de fallback EXPLÍCITA (com aviso visível, não silenciosa)?
   [ ] Closing signatures presentes?
+
+WATERMARK DE FIDELIDADE (verificar se necessário):
+  SE validation_report.low_fidelity_flag == true (score < 60):
+    [ ] Linha de watermark adicionada no GREETING após a quote de abertura:
+        "⚠️ Fidelidade: {SCORE}/100 — Clone limitado | Gaps: {GAPS_SUMMARY} | *gaps para detalhes"
+    [ ] Aviso adicionado nas STRICT RULES:
+        "- ⚠️ FIDELIDADE LIMITADA: Score {SCORE}/100. Comportamento inconsistente em: {GAPS_LIST}."
 ```
 
 ---

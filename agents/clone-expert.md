@@ -100,7 +100,7 @@ Qual expert você quer clonar? Me passa o nome + fontes disponíveis.
 | `*extract-behavior` | `tasks/04-extract-behavioral-dna.md` | `behavioral_dna.yaml` |
 | `*extract-values` | `tasks/05-extract-values-dna.md` | `values_dna.yaml` |
 | `*validate` | `tasks/06-validate-extraction.md` | `validation_report.yaml` |
-| `*decide-type` | `tasks/07-design-squad-architecture.md` | `clone_type.yaml` |
+| `*decide-type` | `tasks/07-decide-clone-type.md` | `clone_type.yaml` |
 | `*generate` | `tasks/08-generate-agent.md` | `{expert}.md` |
 | `*smoketest` | `tasks/09-smoke-test.md` | `smoke_test_report.yaml` |
 | `*score` | — (inline) | Fidelity score calculation |
@@ -159,7 +159,17 @@ ROUTE → *smoketest
 ### *clone — Pipeline Completo (Inline)
 
 ```
-EXECUÇÃO SEQUENCIAL:
+EXECUÇÃO SEQUENCIAL COM CHECKPOINTS:
+
+─────────────────────────────────────────
+CHECKPOINT TEMPLATE (atualizar após cada fase):
+  1. Atualizar output/{expert-slug}/pipeline-state.yaml:
+     - pipeline.current_phase → número da próxima fase
+     - pipeline.completed_tasks → adicionar ID concluído
+     - artifacts.{fase}.exists → true
+     - expert.last_updated → timestamp atual
+  2. Confirmar no chat: "✓ Fase X concluída — {artefato} salvo."
+─────────────────────────────────────────
 
 FASE 1 — SOURCE DISCOVERY
   Inputs necessários:
@@ -168,32 +178,46 @@ FASE 1 — SOURCE DISCOVERY
   Ação: carregar tasks/01-source-discovery.md
   Gate: mínimo 3 fontes Tier 1
   SE não atingir gate → BLOQUEAR, solicitar mais fontes
+  ✓ Checkpoint: criar pipeline-state.yaml + salvar sources.yaml
 
 FASE 2-5 — EXTRAÇÃO (sequencial: 02→03→04→05)
   Executar tasks na ordem: Thinking → Voice → Behavioral → Values
   Cada task produz um arquivo .yaml de DNA
   Thinking DNA (02) informa como interpretar os demais — não pular a ordem
   Aplicar filtro Pareto ao Cubo em cada extração
+  ✓ Checkpoint após cada fase: atualizar pipeline-state.yaml + confirmar artefato salvo
 
 FASE 6 — VALIDAÇÃO
   Calcular fidelity score
   SE score < 40 → BLOQUEAR, reportar gaps específicos
   SE score 40-60 → WARN, perguntar se user quer continuar
   SE score ≥ 60 → PROSSEGUIR
+  ✓ Checkpoint: atualizar gates.G2.fidelity_score no pipeline-state.yaml
 
 FASE 7 — DESIGN DO SQUAD
   Todo clone é um Squad — a variação é o tamanho (3-15 especialistas)
   Analisar domínios e volume de fontes
   Definir tiers (Core / Execução / Estratégia) e especialistas
-  Confirmar arquitetura com user
+
+  ⛔ GATE G3 — PARADA OBRIGATÓRIA:
+  Apresentar ao user:
+    - Arquitetura proposta (tiers + lista de especialistas)
+    - Número de arquivos .md que serão gerados
+    - Estimativa de domínios cobertos
+  Aguardar confirmação explícita antes de prosseguir.
+  SE user não confirmar → NÃO iniciar Fase 8.
+  SE user pede ajuste → redesenhar e apresentar novamente.
+  ✓ Checkpoint: atualizar gates.G3.confirmed_by_user = true após aprovação
 
 FASE 8 — GERAR
   Injetar payload no container adequado
   Produzir {expert-name}.md
+  ✓ Checkpoint: atualizar artifacts.agent_file no pipeline-state.yaml
 
 FASE 9 — SMOKE TEST
-  Executar 3 testes comportamentais
-  Reportar resultado + gaps de fidelidade
+  Executar 3 testes comportamentais + Teste 4 (Routing — obrigatório)
+  Reportar pre_validation_verdict + instruções de teste manual
+  ✓ Checkpoint: atualizar gates.G4 + smoke_test no pipeline-state.yaml
 
 OUTPUT FINAL:
   {expert-name}.md → copiar para o path do escopo definido na task 07
@@ -289,19 +313,52 @@ OUTPUT: Lista filtrada com classificação por nível.
 ### *status — Pipeline Status (Inline)
 
 ```
-Artefatos em: clone-expert/output/{expert-slug}/
+PASSO 1 — Localizar pipeline-state.yaml
+  Path: output/{expert-slug}/pipeline-state.yaml
+  SE arquivo não existe → exibir status vazio com instrução para rodar *research primeiro
 
-  FASE 1 — Source Discovery:     [DONE/PENDING/BLOCKED] — X fontes (Y Tier1)        → sources.yaml
-  FASE 2 — Thinking DNA:         [DONE/PENDING/BLOCKED] — X frameworks               → thinking_dna.yaml
-  FASE 3 — Voice DNA:            [DONE/PENDING/BLOCKED] — X termos, Y frases         → voice_dna.yaml
-  FASE 4 — Behavioral DNA:       [DONE/PENDING/BLOCKED] — X states                   → behavioral_dna.yaml
-  FASE 5 — Values DNA:           [DONE/PENDING/BLOCKED] — X values                   → values_dna.yaml
-  FASE 6 — Validation:           [DONE/PENDING/BLOCKED] — Score: X/100               → validation_report.yaml
-  FASE 7 — Type Decision:        [DONE/PENDING/BLOCKED] — Tipo: A/B                  → clone_type.yaml
-  FASE 8 — Generation:           [DONE/PENDING/BLOCKED] — {expert-name}.md           → {expert-name}.md
-  FASE 9 — Smoke Test:           [DONE/PENDING/BLOCKED] — X/3 passed                 → smoke_test_report.yaml
+PASSO 2 — Ler e exibir estado persistido
+  Carregar pipeline-state.yaml e exibir:
 
-Próximo passo: [ação específica para desbloquear]
+  Expert: {expert.name}
+  Iniciado: {expert.started_at}
+  Última atualização: {expert.last_updated}
+
+  PIPELINE:
+  ─────────────────────────────────────────────────────────────────────────────
+  FASE 1 — Source Discovery:   [{status}] — {tier1_count} fontes Tier1        → sources.yaml
+  FASE 2 — Thinking DNA:       [{status}] — {framework_count} frameworks      → thinking_dna.yaml
+  FASE 3 — Voice DNA:          [{status}] — {vocabulary_count} termos         → voice_dna.yaml
+  FASE 4 — Behavioral DNA:     [{status}] — {states_count} states             → behavioral_dna.yaml
+  FASE 5 — Values DNA:         [{status}] — {values_count} valores            → values_dna.yaml
+  FASE 6 — Validation:         [{status}] — Score: {fidelity_score}/100       → validation_report.yaml
+  FASE 7 — Type Decision:      [{status}] — confirmed: {confirmed_by_user}    → clone_type.yaml
+  FASE 8 — Generation:         [{status}] — {expert_slug}.md                  → {expert_name}.md
+  FASE 9 — Smoke Test:         [{status}] — pre_verdict: {verdict}            → smoke_test_report.yaml
+  ─────────────────────────────────────────────────────────────────────────────
+
+  GATES:
+    G1 (Sources):    {gates.G1.status} — tier1: {gates.G1.tier1_count}
+    G2 (Fidelity):   {gates.G2.status} — score: {gates.G2.fidelity_score}
+    G3 (User Aprov): {gates.G3.status} — confirmed: {gates.G3.confirmed_by_user}
+    G4 (Smoke Test): {gates.G4.status} — verdict: {gates.G4.pre_validation_verdict}
+
+  FIDELIDADE ATUAL:
+    A (Frameworks):   {fidelity.components.A_frameworks}
+    B (Frases):       {fidelity.components.B_phrases}
+    C (Behavioral):   {fidelity.components.C_behavioral}
+    D (Vocabulário):  {fidelity.components.D_vocabulary}
+    E (Exemplos):     {fidelity.components.E_examples}
+
+  Fase atual: {pipeline.current_phase}
+  Próximo passo: {next_step}
+  SE blocked_reason ≠ "" → exibir: "BLOQUEADO: {blocked_reason}"
+
+PASSO 3 — Inferência (fallback se pipeline-state.yaml não existe)
+  Verificar quais arquivos YAML existem em output/{expert-slug}/
+  Para cada arquivo presente → marcar fase como DONE (estimado)
+  Exibir aviso: "⚠️ pipeline-state.yaml ausente. Status inferido da existência dos arquivos.
+                  Execute *research para iniciar pipeline com rastreamento formal."
 ```
 
 ---
@@ -330,7 +387,7 @@ scope:
 
   output_target:
     - "Arquivo {expert}.md pronto para instalação (global: ~/.claude/commands/ ou local: .claude/commands/)"
-    - "extraction.yaml com DNA completo e citações"
+    - "4 DNA YAMLs produzidos: thinking_dna.yaml, voice_dna.yaml, behavioral_dna.yaml, values_dna.yaml"
     - "Fidelity score ≥ 40 para gerar (≥ 60 recomendado para uso geral)"
     - "3/3 smoke tests passando"
 ```
@@ -608,9 +665,9 @@ on_generation_ready:
 | Behavioral DNA | 3+ behavioral states, 5+ immune system triggers |
 | Values DNA | Hierarquia de valores, 2+ antipadrões, core obsessions documentadas |
 | Validation | Fidelity score calculado, gaps documentados |
-| Type Decision | Tipo A ou B decidido e aprovado pelo user |
+| Type Decision | Arquitetura Squad decidida (tiers + especialistas) e aprovada pelo user (G3) |
 | Generation | .md gerado, instalável (global ou local conforme escopo) |
-| Smoke Test | 3/3 testes comportamentais passando |
+| Smoke Test | 4 testes executados: 3 comportamentais + Routing (obrigatório para Squad) |
 
 ---
 
@@ -631,7 +688,6 @@ dependencies:
   templates:
     - clone-expert/templates/extraction-template.yaml   # template para DNA YAMLs
     - clone-expert/templates/sources-template.yaml      # template para sources.yaml (task 01)
-    - clone-expert/templates/squad-agent.md             # template de geração Tipo A
     - clone-expert/templates/squad-agent.md             # template único de geração (todo clone é Squad)
     - clone-expert/templates/agent-container.md         # referência de seções (NÃO usar diretamente)
   checklists:
@@ -642,6 +698,7 @@ dependencies:
     - clone-expert/data/pareto-filter.yaml
     - clone-expert/data/extraction-dimensions.yaml
     - clone-expert/data/example-extraction.yaml
+    - clone-expert/data/smoke-test-questions.yaml
   config:
     - clone-expert/config.yaml
   note: "Todos os paths relativos à raiz do projeto."

@@ -1,0 +1,242 @@
+# Field Mapping — DNA YAML → squad-agent.md Template
+# Usado pela Task 08 para injetar payloads com precisão campo-a-campo
+# Garante que dois executores produzam o mesmo output para o mesmo DNA
+
+version: "1.0"
+purpose: "Mapeamento explícito de campos YAML para placeholders do template squad-agent.md"
+
+mappings:
+
+  # ─────────────────────────────────────────────
+  # THINKING DNA → squad-agent.md
+  # ─────────────────────────────────────────────
+  thinking_dna:
+
+    primary_framework:
+      source_field: "thinking_dna.primary_framework"
+      target_placeholder: "{PRIMARY_FRAMEWORK_NAME}"
+      format: "string"
+      example: '"Route → Diagnose → Prescribe"'
+      include_sources: false
+
+    mental_models:
+      source_field: "thinking_dna.mental_models[]"
+      target_placeholder: "MM_001 ... MM_00N (bloco completo)"
+      format: |
+        MM_00N:
+          name: "{nome} (MASTER MODEL se for o primeiro)"
+          formula: "{formula se existir}"
+          insight: "{insight central}"
+          application: "{como aplicar}"
+          # [SOURCE: referência]
+      include_fields: [name, formula, insight, application, source]
+      note: "Incluir todos os mental_models do YAML. Primeiro modelo = MASTER MODEL."
+
+    decision_tree:
+      source_field: "thinking_dna.decision_tree[]"
+      target_placeholder: "decision_tree (lista numerada)"
+      format: |
+        - "1. {passo_1}"
+        - "2. {passo_2}"
+        - "N. {passo_n}"
+      note: "Preservar ordem exata. Cada passo em aspas."
+
+    heuristics:
+      source_field: "thinking_dna.heuristics[]"
+      target_placeholder: "heuristics (lista SE/ENTÃO)"
+      format: '"SE {condição} ENTÃO {ação}"'
+      note: "Usar exatamente o padrão SE/ENTÃO. Máximo 8 heurísticas."
+
+    veto_conditions:
+      source_field: "thinking_dna.veto_conditions[]"
+      target_placeholder: "{VETO_CONDITIONS} em THINKING DNA e em STRICT RULES"
+      format: |
+        # Em THINKING DNA:
+        - "{veto_1}"
+        - "{veto_2}"
+
+        # Em STRICT RULES (transformar em NEVER):
+        - NEVER {veto_1_como_comportamento_proibido}
+        - NEVER {veto_2_como_comportamento_proibido}
+      note: "Veto conditions aparecem EM DOIS LUGARES: THINKING DNA (como lista) e STRICT RULES (como NEVER)."
+
+  # ─────────────────────────────────────────────
+  # VOICE DNA → squad-agent.md
+  # ─────────────────────────────────────────────
+  voice_dna:
+
+    always_use:
+      source_field: "voice_dna.vocabulary.always_use[]"
+      target_placeholder: "{VOCAB_ALWAYS_USE}"
+      format: '- "{termo} — NUNCA '\''{alternativa_generica}'\''"'
+      note: "Mínimo 8 termos. Formato: termo → alternativa genérica que ele NUNCA usaria."
+
+    never_use:
+      source_field: "voice_dna.vocabulary.never_use[]"
+      target_placeholder: "{VOCAB_NEVER_USE}"
+      format: '- "{termo_proibido} — use '\''{alternativa_correta}'\''"'
+      note: "Mínimo 3 termos. Incluir também em STRICT RULES como: NEVER use prohibited vocabulary."
+
+    signature_phrases:
+      source_field: "voice_dna.signature_phrases[]"
+      target_placeholder: "{SIGNATURE_PHRASES} — aparece em: GREETING (quote abertura), OUTPUT EXAMPLES, CLOSING SIGNATURES"
+      format: |
+        # Greeting: usar a frase mais forte como quote de abertura
+        # Output Examples: frases devem aparecer organicamente nas respostas
+        # Closing: últimas 3-4 frases como assinaturas
+      note: "Mínimo 5 frases confirmadas em 3+ fontes."
+
+    tone_profile:
+      source_field: "voice_dna.tone_profile"
+      target_placeholder: "{STYLE_DESCRIPTOR} em PERSONA"
+      format: "string descritivo"
+      example: '"Direto, pragmático, provocativo — faz as perguntas que ninguém quer ouvir"'
+      note: "Tom GERAL vai em PERSONA.style. Tom em REAÇÃO ESPECÍFICA vai em BEHAVIORAL STATES."
+
+    communication_patterns:
+      source_field: "voice_dna.communication_patterns[]"
+      target_placeholder: "communication_style (lista em VOICE DNA)"
+      format: '- "{padrão de comunicação}"'
+      note: "Incluir padrões como: diagnóstico antes da prescrição, dado antes do conselho, etc."
+
+    antipattern_rejection_template:
+      source_field: "voice_dna.antipattern_rejection_template"
+      target_placeholder: "{REJECTION_TEMPLATE_NO_ESTILO_DO_EXPERT}"
+      format: "template de rejeição no estilo do expert"
+      note: "Como o expert rejeita más ideias: estrutura típica = problema → princípio → consequência → alternativa."
+
+  # ─────────────────────────────────────────────
+  # BEHAVIORAL DNA → squad-agent.md
+  # ─────────────────────────────────────────────
+  behavioral_dna:
+
+    immune_system:
+      source_field: "behavioral_dna.immune_system[]"
+      target_placeholder: "immune_system (lista trigger/response em VOICE DNA)"
+      format: |
+        - trigger: "{situação que ativa rejeição}"
+          response: "{resposta no estilo do expert}"
+      note: "Mínimo 5 triggers. Respostas devem usar vocabulário exclusivo do expert."
+
+    behavioral_states:
+      source_field: "behavioral_dna.behavioral_states[]"
+      target_placeholder: "BEHAVIORAL STATES (seção dedicada)"
+      format: |
+        on_{trigger_slug}:
+          trigger: "{situação específica}"
+          response: |
+            {resposta completa no estilo do expert
+            usando frameworks + vocabulário + frases assinatura}
+      include_fields: [trigger, response]
+      note: "Mínimo 3 states. Cada response deve ser reconhecível como ESSE expert específico."
+
+    disagreement_style:
+      source_field: "behavioral_dna.disagreement_style"
+      target_placeholder: "incluir em behavioral_states e immune_system"
+      note: "Como o expert discorda: direto, por questionamento, por framework? Refletir nos states."
+
+  # ─────────────────────────────────────────────
+  # VALUES DNA → squad-agent.md
+  # ─────────────────────────────────────────────
+  values_dna:
+
+    core_beliefs:
+      source_field: "values_dna.core_beliefs[]"
+      target_placeholder: "PERSONA.identity (3-5 frases) + BEHAVIORAL STATES"
+      format: "incorporar na identidade e nos behavioral states"
+      note: "Crenças fundamentais definem como o expert vê o mundo. Aparecem na PERSONA como declarações."
+
+    veto_conditions:
+      source_field: "values_dna.veto_conditions[]"
+      target_placeholder: "THINKING DNA.veto_conditions + STRICT RULES"
+      note: "Veto conditions de values_dna SE COMBINAM com os de thinking_dna. Não duplicar — unificar."
+
+    non_negotiables:
+      source_field: "values_dna.non_negotiables[]"
+      target_placeholder: "STRICT RULES (como NEVER)"
+      note: "Não-negociáveis viram regras absolutas no STRICT RULES."
+
+  # ─────────────────────────────────────────────
+  # SEÇÕES DERIVADAS (não têm source direto — são compostas)
+  # ─────────────────────────────────────────────
+  derived_sections:
+
+    strict_rules:
+      sources: ["thinking_dna.veto_conditions", "behavioral_dna.immune_system", "values_dna.non_negotiables", "voice_dna.vocabulary.never_use"]
+      format: |
+        - NEVER load specialist files during activation — only when command is invoked
+        - NEVER skip the greeting
+        - NEVER use hedging language ({forbidden_hedges_from_voice_dna})
+        - NEVER use prohibited vocabulary: {never_use_from_voice_dna}
+        - NEVER {veto_condition_1_from_thinking_dna}
+        - NEVER {veto_condition_2_from_thinking_dna}
+        - NEVER {non_negotiable_from_values_dna}
+        - Your FIRST action MUST be adopting the persona in Step 1
+        - Your SECOND action MUST be checking conversation context (Step 1.5)
+        - Your THIRD action MUST be displaying the greeting in Step 2
+      note: "SE low_fidelity_flag:true → adicionar: '- ⚠️ FIDELIDADE LIMITADA: Score X/100. Gaps: {lista}. Para melhorar: *gaps no clone-expert.'"
+
+    persona_identity:
+      sources: ["values_dna.core_beliefs", "thinking_dna.primary_framework", "voice_dna.tone_profile"]
+      format: |
+        role: "{role derivado do domínio principal}"
+        identity: |
+          {3-5 frases que capturam a essência do expert
+          usando suas próprias palavras e crenças centrais}
+        style: "{tone_profile como descritor curto}"
+        focus: "{primary_framework + foco central}"
+      note: "Identity deve ser reconhecível por alguém que conhece o expert. Não genérico."
+
+    output_examples:
+      sources: ["behavioral_dna.examples", "voice_dna.signature_phrases", "thinking_dna.decision_tree"]
+      format: |
+        - input: "{pergunta típica do público-alvo do expert}"
+          output: |
+            {resposta que aplica:
+            - primary_framework ao problema
+            - vocabulário exclusivo (always_use)
+            - pelo menos 1 frase assinatura
+            - immune_system se a premissa for errada}
+      minimum: 3
+      maximum: 5
+      note: "NUNCA inventar — apenas combinar elementos confirmados das fontes. Aplicar Pareto: só exemplos GENIAL ou EXCELENTE."
+
+    antipatterns_table:
+      sources: ["behavioral_dna.immune_system", "thinking_dna.veto_conditions"]
+      format: |
+        | Antipadrao | Principio Violado | Resposta |
+        |{antipattern}|{principio}|"{resposta_curta_no_estilo}"|
+      note: "Tabela de rejeição imediata. Cada linha = 1 trigger do immune_system."
+
+# ─────────────────────────────────────────────
+# CONDITIONAL FIELDS (gerados por task 08, não vêm do DNA)
+# ─────────────────────────────────────────────
+conditional:
+
+  low_fidelity_watermark:
+    source_field: "validation_report.low_fidelity_flag + fidelity_score.total + gaps"
+    target_placeholder: "{LOW_FIDELITY_WATERMARK}"
+    condition: "SE validation_report.low_fidelity_flag == true (score < 60)"
+    value_if_true: |
+      ⚠️ **Fidelidade Limitada: {SCORE}/100** — Clone pode ter comportamento inconsistente em: {GAPS_SUMMARY}
+      Use `*gaps` para detalhes.
+    value_if_false: ""  # placeholder removido — linha fica vazia no greeting
+    note: "Inserir entre a linha de título e a quote de abertura no GREETING."
+
+  low_fidelity_watermark_rule:
+    source_field: "validation_report.low_fidelity_flag"
+    target_placeholder: "{LOW_FIDELITY_WATERMARK_RULE}"
+    condition: "SE validation_report.low_fidelity_flag == true"
+    value_if_true: "- ⚠️ FIDELIDADE LIMITADA ({SCORE}/100): Comportamento inconsistente em {GAPS_LIST}. Aumentar extração para melhorar."
+    value_if_false: ""  # placeholder removido — linha removida das STRICT RULES
+    note: "Se score >= 60, remover a linha inteira das STRICT RULES (não deixar linha vazia)."
+
+# ─────────────────────────────────────────────
+# REGRAS DE FORMATAÇÃO GLOBAL
+# ─────────────────────────────────────────────
+formatting_rules:
+  sources_inline: true                  # [SOURCE: ref] deve aparecer inline, não em seção separada
+  yaml_blocks_in_markdown: true         # seções DNA usam blocos yaml dentro do .md
+  language_mix: "português para instruções, inglês para nomes de seções"
+  placeholder_format: "{ALL_CAPS_SNAKE_CASE}"
+  note: "Após injeção: ZERO placeholders devem restar no arquivo final. Verificar com busca por { antes de entregar."

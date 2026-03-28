@@ -8,6 +8,56 @@
 
 ---
 
+## Pre-Flight Check
+
+Executar ANTES de qualquer extração:
+
+```
+[ ] output/{expert-slug}/voice_dna.yaml existe?
+[ ] voice_dna.yaml.vocabulary.always_use tem >= 5 termos?
+
+SE qualquer check falhar → BLOQUEAR:
+  "Task 04 bloqueada: Voice DNA incompleto ou ausente.
+   Execute *extract-voice primeiro antes de continuar."
+```
+
+---
+
+## PARETO FILTER (aplicar antes de extrair qualquer item)
+
+Para cada padrão comportamental identificado, classificar antes de registrar:
+
+```
+🔥 GENIAL (0.8%) — Reação única que só este expert teria nesta situação.
+   Confirmar em 3+ fontes. EXTRAIR OBRIGATORIAMENTE.
+
+💎 EXCELENTE (4%) — Padrão comportamental que aparece em 3+ fontes.
+   INCLUIR no DNA.
+
+🚀 ÚTIL (20%) — Reação razoável mas qualquer expert poderia ter.
+   INCLUIR apenas se reforça padrão GENIAL ou EXCELENTE.
+
+💩 RUÍDO (76%) — Comportamento genérico de "bom consultor".
+   DESCARTAR.
+
+Regra de ouro: SE a reação poderia vir de qualquer agente de IA bem instruído
+→ RUÍDO → descartar.
+```
+
+---
+
+## Nota de Escopo — Evitar Overlap com Voice DNA
+
+```
+Tom de voz GERAL → já documentado em voice_dna.yaml (tone_profile). NÃO replicar aqui.
+Tom de voz em REAÇÃO ESPECÍFICA → documentar em behavioral_states (é contextual, não geral).
+
+Regra: SE o atributo de tom vale para QUALQUER situação → Voice DNA.
+       SE o atributo vale só para um TRIGGER específico → Behavioral DNA.
+```
+
+---
+
 ## Objetivo
 
 Extrair como o expert REAGE. Como ele responde a situações específicas, o que dispara respostas características, o que ele bloqueia automaticamente, como ele se defende de ataques ao seu modelo de pensamento.

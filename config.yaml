@@ -96,10 +96,33 @@ clone_types:
       tier3: "Strategic Specialists — diagnóstico e estratégia (1-3 especialistas)"
     examples:
       - "Alex Hormozi (15 specialists) — expert prolífico"
-      - "Alfredo Soares (12 specialists) — expert com foco em B2B"
-      - "Tallis Gomes (8 specialists) — expert focado em liderança/startup"
       - "Seth Godin (5 specialists) — expert de domínio único (ainda Squad)"
       - "Warren Buffett (4 specialists) — expert ultra-focado (ainda Squad)"
+
+# Critérios numéricos de tamanho do Squad — FONTE DA VERDADE para Task 07
+# Usar estes critérios objetivos em vez de julgamento subjetivo ("prolific", "focused")
+squad_sizing_criteria:
+  small:
+    label: "Squad Small (3-5 specialists)"
+    conditions:
+      - sources_tier1: "<= 3"
+      - OR distinct_domains: "<= 4"
+    use_when: "Expert focado em 1-2 domínios principais"
+
+  standard:
+    label: "Squad Standard (6-10 specialists)"
+    conditions:
+      - sources_tier1: "4 a 6"
+      - OR distinct_domains: "5 a 8"
+    use_when: "Expert com domínios principais + execução + diagnóstico"
+
+  complete:
+    label: "Squad Complete (10-15 specialists)"
+    conditions:
+      - sources_tier1: ">= 7"
+      - OR distinct_domains: ">= 9"
+      - OR content_hours: ">= 50"
+    use_when: "Expert prolífico com múltiplos livros, cursos e domínios"
 
 # Pareto Filter
 pareto_filter:
@@ -236,7 +259,17 @@ fidelity_scoring:
 
   total_max: 100
   formula: "min(frameworks×10,30) + min(frases×5,25) + min(comportamento×8,24) + min(vocabulario×3,15) + min(exemplos×2,6)"
-  note: "Cada componente tem cap máximo. Score total nunca ultrapassa 100."
+  penalty_values_dna: "-4 pts do Component C (padroes_comportamentais) se values_dna ausente OU veto_conditions < 2"
+  note: "Cada componente tem cap máximo. Score total nunca ultrapassa 100. Aplicar penalidade antes de somar Component C."
+
+# Convenções de path canônico — FONTE DA VERDADE para paths de arquivos gerados
+# Todo código (tasks, templates, agentes) deve referenciar estes paths
+path_conventions:
+  specialist_agents: "output/{expert-slug}/tasks/{expert-slug}-{domain}.md"
+  orchestrator: "output/{expert-slug}/{expert-slug}.md"
+  dna_files: "output/{expert-slug}/{expert-slug}-{dna-type}-dna.yaml"
+  pipeline_state: "output/{expert-slug}/pipeline-state.yaml"
+  note: "Template squad-agent.md deve referenciar output/, não squads/. Fallback para inline DNA é último recurso — NUNCA silencioso."
 
 # Artefatos do pipeline — onde cada fase salva seus outputs
 artifacts:
@@ -258,11 +291,16 @@ artifacts:
     - name: "behavioral_dna.yaml"
       produced_by: "fase 04"
       required_by: ["fase 06", "fase 08"]
+      optional: false
+      partial_allowed: true
+      note: "Partial aceito — marcar como incomplete no validation_report. Ausência bloqueia geração."
 
     - name: "values_dna.yaml"
       produced_by: "fase 05"
       required_by: ["fase 08"]
-      optional: true
+      optional: false
+      partial_allowed: true
+      note: "Obrigatório mas conteúdo parcial aceito. Ausência completa impacta Component C (-4 pts)."
 
     - name: "validation_report.yaml"
       produced_by: "fase 06"
@@ -271,6 +309,11 @@ artifacts:
     - name: "clone_type.yaml"
       produced_by: "fase 07"
       required_by: ["fase 08"]
+
+    - name: "pipeline-state.yaml"
+      produced_by: "fase 01"
+      required_by: ["todas as fases — atualizar após cada task"]
+      note: "Criado pela Task 01. Cada task subsequente atualiza current_phase e artifacts."
 
     - name: "{expert-name}.md"
       produced_by: "fase 08"

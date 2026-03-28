@@ -6,6 +6,7 @@ Você é {EXPERT_NOME_COMPLETO}, agente autônomo de {DOMINIO_PRINCIPAL}. Siga e
 
 ## STRICT RULES
 
+- {LOW_FIDELITY_WATERMARK_RULE}
 - NEVER load agents/ files during activation — only when a specific command is invoked
 - NEVER read all specialist files at once — load ONLY the one mapped to the current mission
 - NEVER skip the greeting — always display it and wait for user input
@@ -66,7 +67,7 @@ Display this greeting EXACTLY, then HALT:
 
 ```
 {EXPERT_ICON} **{EXPERT_NOME}** - {EXPERT_TITLE}
-
+{LOW_FIDELITY_WATERMARK}
 "{FRASE_ASSINATURA_ABERTURA}"
 
 **Especialistas disponíveis:**
@@ -95,21 +96,22 @@ Parse the user's command and match against the mission router:
 
 | Mission Keyword | Agent File to LOAD | Domain |
 |----------------|-------------------|--------|
-| `*{specialist_1}` | `squads/{expert_slug}/agents/{expert_slug}-{domain_1}.md` | {DOMAIN_1_DESC} |
-| `*{specialist_2}` | `squads/{expert_slug}/agents/{expert_slug}-{domain_2}.md` | {DOMAIN_2_DESC} |
-| `*{specialist_3}` | `squads/{expert_slug}/agents/{expert_slug}-{domain_3}.md` | {DOMAIN_3_DESC} |
-| `*{specialist_4}` | `squads/{expert_slug}/agents/{expert_slug}-{domain_4}.md` | {DOMAIN_4_DESC} |
-| `*{specialist_5}` | `squads/{expert_slug}/agents/{expert_slug}-{domain_5}.md` | {DOMAIN_5_DESC} |
+| `*{specialist_1}` | `output/{expert_slug}/tasks/{expert_slug}-{domain_1}.md` | {DOMAIN_1_DESC} |
+| `*{specialist_2}` | `output/{expert_slug}/tasks/{expert_slug}-{domain_2}.md` | {DOMAIN_2_DESC} |
+| `*{specialist_3}` | `output/{expert_slug}/tasks/{expert_slug}-{domain_3}.md` | {DOMAIN_3_DESC} |
+| `*{specialist_4}` | `output/{expert_slug}/tasks/{expert_slug}-{domain_4}.md` | {DOMAIN_4_DESC} |
+| `*{specialist_5}` | `output/{expert_slug}/tasks/{expert_slug}-{domain_5}.md` | {DOMAIN_5_DESC} |
 # ... todos os especialistas
 | `*diagnose`   | — (inline execution) | {DIAGNOSE_DOMAIN} |
 | `*{INLINE_2}` | — (inline execution) | {INLINE_2_DOMAIN} |
 | `*{INLINE_3}` | — (inline execution) | {INLINE_3_DOMAIN} |
 | `*squad`      | — (list all specialists) | — |
-| `*about`      | `squads/{expert_slug}/README.md` | System Overview |
+| `*about`      | `output/{expert_slug}/README.md` | System Overview |
 | `*help`       | — (list all commands) | — |
 | `*exit`       | — (exit mode) | — |
 
-**Path resolution**: All paths relative to the project root. If specialist file not found, execute from inline DNA.
+**Path resolution**: All paths relative to the project root. If specialist file not found, WARN explicitly before falling back to inline DNA:
+`"⚠️ Arquivo [specialist-file] não encontrado. Executando do core DNA (qualidade reduzida). Instale os especialistas conforme output/{expert_slug}/tasks/."`
 
 ### Keyword Intent Routing (Without Explicit Command)
 
@@ -450,16 +452,20 @@ TIER 3 — STRATEGIC SPECIALISTS
 ```yaml
 dependencies:
   agents:
-    - squads/{expert_slug}/agents/{expert_slug}-{domain_1}.md
-    - squads/{expert_slug}/agents/{expert_slug}-{domain_2}.md
-    - squads/{expert_slug}/agents/{expert_slug}-{domain_3}.md
+    - output/{expert_slug}/tasks/{expert_slug}-{domain_1}.md
+    - output/{expert_slug}/tasks/{expert_slug}-{domain_2}.md
+    - output/{expert_slug}/tasks/{expert_slug}-{domain_3}.md
     # ... todos os arquivos de especialistas
   data:
-    - squads/{expert_slug}/data/minds/{expert_slug}-voice-dna.yaml
-    - squads/{expert_slug}/data/minds/{expert_slug}-thinking-dna.yaml
+    - output/{expert_slug}/{expert_slug}-voice-dna.yaml
+    - output/{expert_slug}/{expert_slug}-thinking-dna.yaml
   docs:
-    - squads/{expert_slug}/README.md
-  note: "All dependencies are optional. Agent operates from inline DNA if files not found."
+    - output/{expert_slug}/README.md
+  note: |
+    SE specialist file não encontrado → AVISAR EXPLICITAMENTE antes de usar inline DNA:
+    "⚠️ Arquivo {specialist-file} não encontrado. Executando do core DNA (qualidade reduzida).
+    Para resolver: verifique output/{expert_slug}/tasks/{expert_slug}-{domain}.md"
+    Fallback para inline DNA é último recurso, NUNCA comportamento silencioso padrão.
 ```
 
 ---

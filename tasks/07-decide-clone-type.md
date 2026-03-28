@@ -133,6 +133,12 @@ Confirma esta arquitetura? Posso:
   (A) Ajustar tiers ou renomear especialistas
   (B) Adicionar/remover especialistas
   (C) Confirmar e avançar para geração
+
+SE usuário escolher (C):
+  → Atualizar confirmed_by_user: true no clone_type.yaml
+  → SOMENTE então prosseguir para Task 08
+SE usuário escolher (A) ou (B):
+  → Aplicar ajustes e re-apresentar para nova confirmação
 ```
 
 ---
@@ -198,13 +204,15 @@ squad_architecture:
   total_specialists: 0
 
 justification: ""
-confirmed_by_user: true
+confirmed_by_user: false  # padrão — só muda para true após confirmação explícita no Passo 4
 template_to_use: "templates/squad-agent.md"
 
 # Escopo de instalação
 scope: "global | local"
 install_path: "~/.claude/commands/ | .claude/commands/"
-install_command: "cp {expert-name}.md ~/.claude/commands/ | cp {expert-name}.md .claude/commands/"
+install_command_global: "cp {expert-name}.md ~/.claude/commands/{expert-name}.md"
+install_command_local: "mkdir -p .claude/commands/ && cp {expert-name}.md .claude/commands/{expert-name}.md"
+install_note: "Usar o comando correspondente ao scope definido acima (global ou local)"
 ```
 
 ---

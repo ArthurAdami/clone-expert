@@ -8,6 +8,45 @@
 
 ---
 
+## Pre-Flight Check
+
+Executar ANTES de qualquer extração:
+
+```
+[ ] output/{expert-slug}/thinking_dna.yaml existe?
+[ ] thinking_dna.yaml.primary_framework está preenchido?
+[ ] thinking_dna.yaml tem >= 3 mental_models?
+
+SE qualquer check falhar → BLOQUEAR:
+  "Task 03 bloqueada: Thinking DNA incompleto ou ausente.
+   Execute *extract-thinking primeiro e confirme >= 3 frameworks antes de continuar."
+```
+
+---
+
+## PARETO FILTER (aplicar antes de extrair qualquer item)
+
+Para cada padrão de vocabulário, frase ou estilo identificado, classificar antes de registrar:
+
+```
+🔥 GENIAL (0.8%) — Só este expert usaria exatamente essa expressão.
+   Confirmar em 3+ fontes independentes. EXTRAIR OBRIGATORIAMENTE.
+
+💎 EXCELENTE (4%) — Aparece em 3+ fontes, é aplicação específica deste expert.
+   INCLUIR no DNA.
+
+🚀 ÚTIL (20%) — Boa expressão mas outros experts do domínio poderiam usar.
+   INCLUIR apenas se reforça padrão GENIAL ou EXCELENTE já identificado.
+
+💩 RUÍDO (76%) — Qualquer especialista deste domínio diria assim.
+   DESCARTAR — não entra no DNA.
+
+Regra de ouro: SE passar no teste "Outro expert do mesmo domínio usaria
+exatamente essa expressão?" → RUÍDO → descartar.
+```
+
+---
+
 ## Objetivo
 
 Extrair como o expert FALA. Não o que ele diz — como ele diz. Vocabulário específico, frases que só ele usa, termos que ele evita, metáforas recorrentes, estrutura de comunicação.
